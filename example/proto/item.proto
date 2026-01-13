@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package item.v1;
+
+option go_package = "github.com/gyozatech/grpckit/example/proto/itempb";
+
+import "google/api/annotations.proto";
+
+// Item represents a dummy object for CRUD operations.
+message Item {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  int64 created_at = 4;
+  int64 updated_at = 5;
+}
+
+// CreateItemRequest is the request for creating a new item.
+message CreateItemRequest {
+  string name = 1;
+  string description = 2;
+}
+
+// CreateItemResponse is the response after creating an item.
+message CreateItemResponse {
+  Item item = 1;
+}
+
+// GetItemRequest is the request for getting an item by ID.
+message GetItemRequest {
+  string id = 1;
+}
+
+// GetItemResponse is the response containing the requested item.
+message GetItemResponse {
+  Item item = 1;
+}
+
+// ListItemsRequest is the request for listing items.
+message ListItemsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+// ListItemsResponse is the response containing a list of items.
+message ListItemsResponse {
+  repeated Item items = 1;
+  string next_page_token = 2;
+}
+
+// UpdateItemRequest is the request for updating an item.
+message UpdateItemRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+// UpdateItemResponse is the response after updating an item.
+message UpdateItemResponse {
+  Item item = 1;
+}
+
+// DeleteItemRequest is the request for deleting an item.
+message DeleteItemRequest {
+  string id = 1;
+}
+
+// DeleteItemResponse is the response after deleting an item.
+message DeleteItemResponse {
+  bool success = 1;
+}
+
+// ItemService provides CRUD operations for items.
+service ItemService {
+  // CreateItem creates a new item.
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/items"
+      body: "*"
+    };
+  }
+
+  // GetItem retrieves an item by ID.
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/items/{id}"
+    };
+  }
+
+  // ListItems retrieves a list of items.
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/items"
+    };
+  }
+
+  // UpdateItem updates an existing item.
+  rpc UpdateItem(UpdateItemRequest) returns (UpdateItemResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/items/{id}"
+      body: "*"
+    };
+  }
+
+  // DeleteItem deletes an item by ID.
+  rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/items/{id}"
+    };
+  }
+}
