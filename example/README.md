@@ -395,19 +395,42 @@ This example includes custom gRPC interceptors that apply to ALL gRPC calls.
 grpckit.Run(
     // ... services ...
 
-    // Register custom interceptors
+    // Logging interceptor - applies to ALL endpoints
     grpckit.WithUnaryInterceptor(loggingUnaryInterceptor),
-    grpckit.WithUnaryInterceptor(timingUnaryInterceptor),
+
+    // Timing interceptor - skip for ListItems (high-frequency, low-value timing)
+    grpckit.WithUnaryInterceptor(timingUnaryInterceptor,
+        grpckit.ExceptEndpoints("/item.v1.ItemService/ListItems"),
+    ),
+
     grpckit.WithStreamInterceptor(loggingStreamInterceptor),
 )
 ```
+
+### Excluding Endpoints
+
+Use `ExceptEndpoints` to skip specific endpoints from an interceptor:
+
+```go
+grpckit.WithUnaryInterceptor(timingInterceptor,
+    grpckit.ExceptEndpoints(
+        "/item.v1.ItemService/ListItems",
+        "/item.v1.ItemService/HealthCheck",
+    ),
+)
+```
+
+This is useful for:
+- High-frequency endpoints where timing overhead matters
+- Health check endpoints that shouldn't be logged/timed
+- Any endpoint that needs different interceptor behavior
 
 ### Testing Interceptors
 
 When you make a gRPC call, you'll see interceptor logs:
 
 ```bash
-# Using grpcurl
+# CreateItem - shows both logging and timing
 grpcurl -plaintext -d '{"name": "Test", "description": "A test"}' \
   localhost:9090 item.v1.ItemService/CreateItem
 ```
@@ -417,6 +440,17 @@ Server logs:
 [gRPC] Start: /item.v1.ItemService/CreateItem
 [gRPC] Done: /item.v1.ItemService/CreateItem
 [gRPC Timing] /item.v1.ItemService/CreateItem took 1.234ms
+```
+
+```bash
+# ListItems - timing is excluded, only logging shows
+grpcurl -plaintext localhost:9090 item.v1.ItemService/ListItems
+```
+
+Server logs (no timing):
+```
+[gRPC] Start: /item.v1.ItemService/ListItems
+[gRPC] Done: /item.v1.ItemService/ListItems
 ```
 
 ### Interceptor Execution Order

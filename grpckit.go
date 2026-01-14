@@ -83,7 +83,9 @@ func New(opts ...Option) (*Server, error) {
 	if cfg.authFunc != nil {
 		unaryInterceptors = append(unaryInterceptors, grpcAuthInterceptor(cfg))
 	}
-	unaryInterceptors = append(unaryInterceptors, cfg.unaryInterceptors...)
+	for _, reg := range cfg.unaryInterceptors {
+		unaryInterceptors = append(unaryInterceptors, wrapUnaryInterceptor(reg))
+	}
 	if len(unaryInterceptors) > 0 {
 		grpcOpts = append(grpcOpts, grpc.ChainUnaryInterceptor(unaryInterceptors...))
 	}
@@ -93,7 +95,9 @@ func New(opts ...Option) (*Server, error) {
 	if cfg.authFunc != nil {
 		streamInterceptors = append(streamInterceptors, grpcStreamAuthInterceptor(cfg))
 	}
-	streamInterceptors = append(streamInterceptors, cfg.streamInterceptors...)
+	for _, reg := range cfg.streamInterceptors {
+		streamInterceptors = append(streamInterceptors, wrapStreamInterceptor(reg))
+	}
 	if len(streamInterceptors) > 0 {
 		grpcOpts = append(grpcOpts, grpc.ChainStreamInterceptor(streamInterceptors...))
 	}
@@ -246,6 +250,11 @@ func (s *Server) startHTTP(ctx context.Context) error {
 		handler = metricsMiddleware(s.metrics, handler)
 	}
 
+	// Apply built-in CORS middleware (outermost, handles preflight OPTIONS)
+	if s.cfg.corsEnabled && s.cfg.corsConfig != nil {
+		handler = corsMiddleware(*s.cfg.corsConfig)(handler)
+	}
+
 	// Create HTTP server
 	addr := fmt.Sprintf(":%d", s.cfg.httpPort)
 	s.httpServer = &http.Server{
@@ -299,4 +308,34 @@ func (s *Server) GRPCServer() *grpc.Server {
 // Note: This is only available after Start() is called.
 func (s *Server) HTTPServer() *http.Server {
 	return s.httpServer
+}
+
+// wrapUnaryInterceptor wraps an interceptor with endpoint exclusion logic.
+func wrapUnaryInterceptor(reg unaryInterceptorRegistration) grpc.UnaryServerInterceptor {
+	if len(reg.exceptEndpoints) == 0 {
+		return reg.interceptor
+	}
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		for _, endpoint := range reg.exceptEndpoints {
+			if info.FullMethod == endpoint {
+				return handler(ctx, req) // Skip interceptor
+			}
+		}
+		return reg.interceptor(ctx, req, info, handler)
+	}
+}
+
+// wrapStreamInterceptor wraps a stream interceptor with endpoint exclusion logic.
+func wrapStreamInterceptor(reg streamInterceptorRegistration) grpc.StreamServerInterceptor {
+	if len(reg.exceptEndpoints) == 0 {
+		return reg.interceptor
+	}
+	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		for _, endpoint := range reg.exceptEndpoints {
+			if info.FullMethod == endpoint {
+				return handler(srv, ss) // Skip interceptor
+			}
+		}
+		return reg.interceptor(srv, ss, info, handler)
+	}
 }

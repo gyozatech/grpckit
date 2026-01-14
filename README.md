@@ -168,6 +168,38 @@ grpckit.WithPublicEndpoints(
 )
 ```
 
+## CORS
+
+Enable Cross-Origin Resource Sharing (CORS) to allow browser requests from different origins.
+
+### Quick Setup
+
+```go
+// Enable permissive CORS (allows all origins)
+grpckit.WithCORS()
+```
+
+### Custom Configuration
+
+```go
+grpckit.WithCORSConfig(grpckit.CORSConfig{
+    AllowedOrigins:   []string{"https://example.com", "https://app.example.com"},
+    AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE"},
+    AllowedHeaders:   []string{"Authorization", "Content-Type"},
+    AllowCredentials: true,
+    MaxAge:           3600, // Cache preflight for 1 hour
+})
+```
+
+### Default Configuration
+
+When using `WithCORS()`, the default configuration:
+- Allows all origins (`*`)
+- Allows common HTTP methods (GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD)
+- Allows common headers (Authorization, Content-Type, etc.)
+- Enables credentials (when not using wildcard origin)
+- Caches preflight requests for 24 hours
+
 ## Custom Content Types
 
 grpckit supports multiple content types beyond JSON/protobuf. Enable them with simple options.
@@ -408,6 +440,27 @@ Handler
 - **Tracing**: Add distributed tracing spans
 - **Validation**: Validate requests before handlers
 - **Recovery**: Catch panics and convert to errors
+
+### Excluding Endpoints
+
+Skip specific endpoints from an interceptor using `ExceptEndpoints`:
+
+```go
+// Timing interceptor that skips high-frequency endpoints
+grpckit.WithUnaryInterceptor(timingInterceptor,
+    grpckit.ExceptEndpoints(
+        "/item.v1.ItemService/HealthCheck",
+        "/item.v1.ItemService/ListItems",
+    ),
+)
+
+// Same for stream interceptors
+grpckit.WithStreamInterceptor(streamInterceptor,
+    grpckit.ExceptEndpoints("/item.v1.ItemService/StreamItems"),
+)
+```
+
+Endpoints should be in the format `/package.Service/Method`.
 
 ## Endpoints
 

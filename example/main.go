@@ -52,8 +52,15 @@ func main() {
 		// These interceptors apply to ALL gRPC calls (unary and streaming).
 		// They run AFTER the built-in auth interceptor (if configured).
 		// Order: auth → logging → timing (first registered = outermost)
+
+		// Logging interceptor - applies to ALL endpoints
 		grpckit.WithUnaryInterceptor(loggingUnaryInterceptor),
-		grpckit.WithUnaryInterceptor(timingUnaryInterceptor),
+
+		// Timing interceptor - skip for ListItems (high-frequency, low-value timing)
+		grpckit.WithUnaryInterceptor(timingUnaryInterceptor,
+			grpckit.ExceptEndpoints("/item.v1.ItemService/ListItems"),
+		),
+
 		grpckit.WithStreamInterceptor(loggingStreamInterceptor),
 
 		// =====================================================
@@ -92,6 +99,7 @@ func main() {
 		// Features
 		grpckit.WithHealthCheck(),
 		grpckit.WithMetrics(),
+		grpckit.WithCORS(), // Enable CORS for browser requests
 		grpckit.WithSwagger("./proto/gen/item.swagger.json"),
 
 		// Graceful shutdown

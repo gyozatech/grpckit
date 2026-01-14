@@ -25,7 +25,7 @@ func webhookAuthMiddleware(secret string) func(http.Handler) http.Handler {
 
 			// In real code: validate HMAC signature with secret
 			// For demo, just check against a known value
-			if signature != "valid-signature" {
+			if signature != secret {
 				http.Error(w, "Invalid webhook signature", http.StatusForbidden)
 				return
 			}

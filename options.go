@@ -29,10 +29,44 @@ type Option func(*serverConfig)
 // Use this to create middleware for HTTP endpoints.
 type HTTPMiddleware func(http.Handler) http.Handler
 
+// InterceptorOption configures an interceptor's behavior.
+type InterceptorOption func(*interceptorConfig)
+
+// interceptorConfig holds configuration for an interceptor.
+type interceptorConfig struct {
+	exceptEndpoints []string
+}
+
+// ExceptEndpoints excludes the specified gRPC methods from this interceptor.
+// Methods should be in the format "/package.Service/Method".
+//
+// Example:
+//
+//	grpckit.WithUnaryInterceptor(timingInterceptor,
+//	    grpckit.ExceptEndpoints("/item.v1.ItemService/CreateItem"),
+//	)
+func ExceptEndpoints(endpoints ...string) InterceptorOption {
+	return func(c *interceptorConfig) {
+		c.exceptEndpoints = append(c.exceptEndpoints, endpoints...)
+	}
+}
+
 // httpHandlerRegistration holds a custom HTTP handler registration.
 type httpHandlerRegistration struct {
 	pattern string
 	handler http.Handler
+}
+
+// unaryInterceptorRegistration holds a unary interceptor with its config.
+type unaryInterceptorRegistration struct {
+	interceptor     grpc.UnaryServerInterceptor
+	exceptEndpoints []string
+}
+
+// streamInterceptorRegistration holds a stream interceptor with its config.
+type streamInterceptorRegistration struct {
+	interceptor     grpc.StreamServerInterceptor
+	exceptEndpoints []string
 }
 
 // JSONOptions configures JSON marshaling behavior.
@@ -70,6 +104,8 @@ type serverConfig struct {
 	metricsEnabled bool
 	swaggerPath    string
 	swaggerEnabled bool
+	corsEnabled    bool
+	corsConfig     *CORSConfig
 
 	// Marshalers for custom content types
 	marshalers     map[string]runtime.Marshaler
@@ -83,8 +119,8 @@ type serverConfig struct {
 	httpMiddlewares []HTTPMiddleware
 
 	// Custom gRPC interceptors (applied to ALL gRPC calls)
-	unaryInterceptors  []grpc.UnaryServerInterceptor
-	streamInterceptors []grpc.StreamServerInterceptor
+	unaryInterceptors  []unaryInterceptorRegistration
+	streamInterceptors []streamInterceptorRegistration
 
 	// Shutdown
 	gracefulTimeout time.Duration
@@ -109,8 +145,8 @@ func newServerConfig() *serverConfig {
 		gatewayOptions:     make([]runtime.ServeMuxOption, 0),
 		httpHandlers:       make([]httpHandlerRegistration, 0),
 		httpMiddlewares:    make([]HTTPMiddleware, 0),
-		unaryInterceptors:  make([]grpc.UnaryServerInterceptor, 0),
-		streamInterceptors: make([]grpc.StreamServerInterceptor, 0),
+		unaryInterceptors:  make([]unaryInterceptorRegistration, 0),
+		streamInterceptors: make([]streamInterceptorRegistration, 0),
 		gracefulTimeout:    30 * time.Second,
 		logLevel:           "info",
 	}
@@ -214,6 +250,42 @@ func WithHealthCheck() Option {
 func WithMetrics() Option {
 	return func(c *serverConfig) {
 		c.metricsEnabled = true
+	}
+}
+
+// WithCORS enables CORS (Cross-Origin Resource Sharing) with a permissive
+// default configuration that allows requests from any origin.
+// This is suitable for development and public APIs.
+//
+// For custom CORS configuration, use WithCORSConfig instead.
+//
+// Example:
+//
+//	grpckit.WithCORS()
+func WithCORS() Option {
+	return func(c *serverConfig) {
+		c.corsEnabled = true
+		cfg := DefaultCORSConfig()
+		c.corsConfig = &cfg
+	}
+}
+
+// WithCORSConfig enables CORS with a custom configuration.
+// Use this for fine-grained control over allowed origins, methods, and headers.
+//
+// Example:
+//
+//	grpckit.WithCORSConfig(grpckit.CORSConfig{
+//	    AllowedOrigins: []string{"https://example.com", "https://app.example.com"},
+//	    AllowedMethods: []string{"GET", "POST", "PUT", "DELETE"},
+//	    AllowedHeaders: []string{"Authorization", "Content-Type"},
+//	    AllowCredentials: true,
+//	    MaxAge: 3600,
+//	})
+func WithCORSConfig(cfg CORSConfig) Option {
+	return func(c *serverConfig) {
+		c.corsEnabled = true
+		c.corsConfig = &cfg
 	}
 }
 
@@ -378,9 +450,12 @@ func WithHTTPMiddleware(middleware HTTPMiddleware) Option {
 //
 // The built-in auth interceptor (if configured) runs before custom interceptors.
 //
+// Optional InterceptorOption parameters can configure the interceptor's behavior,
+// such as excluding specific endpoints.
+//
 // Example:
 //
-//	// Logging interceptor
+//	// Logging interceptor for all endpoints
 //	grpckit.WithUnaryInterceptor(func(
 //	    ctx context.Context,
 //	    req interface{},
@@ -390,9 +465,21 @@ func WithHTTPMiddleware(middleware HTTPMiddleware) Option {
 //	    log.Printf("[gRPC] %s", info.FullMethod)
 //	    return handler(ctx, req)
 //	})
-func WithUnaryInterceptor(interceptor grpc.UnaryServerInterceptor) Option {
+//
+//	// Timing interceptor that skips specific endpoints
+//	grpckit.WithUnaryInterceptor(timingInterceptor,
+//	    grpckit.ExceptEndpoints("/item.v1.ItemService/ListItems"),
+//	)
+func WithUnaryInterceptor(interceptor grpc.UnaryServerInterceptor, opts ...InterceptorOption) Option {
 	return func(c *serverConfig) {
-		c.unaryInterceptors = append(c.unaryInterceptors, interceptor)
+		cfg := &interceptorConfig{}
+		for _, opt := range opts {
+			opt(cfg)
+		}
+		c.unaryInterceptors = append(c.unaryInterceptors, unaryInterceptorRegistration{
+			interceptor:     interceptor,
+			exceptEndpoints: cfg.exceptEndpoints,
+		})
 	}
 }
 
@@ -402,9 +489,12 @@ func WithUnaryInterceptor(interceptor grpc.UnaryServerInterceptor) Option {
 //
 // The built-in auth interceptor (if configured) runs before custom interceptors.
 //
+// Optional InterceptorOption parameters can configure the interceptor's behavior,
+// such as excluding specific endpoints.
+//
 // Example:
 //
-//	// Logging interceptor for streams
+//	// Logging interceptor for all streams
 //	grpckit.WithStreamInterceptor(func(
 //	    srv interface{},
 //	    ss grpc.ServerStream,
@@ -414,8 +504,20 @@ func WithUnaryInterceptor(interceptor grpc.UnaryServerInterceptor) Option {
 //	    log.Printf("[gRPC Stream] %s", info.FullMethod)
 //	    return handler(srv, ss)
 //	})
-func WithStreamInterceptor(interceptor grpc.StreamServerInterceptor) Option {
+//
+//	// Stream interceptor that skips specific endpoints
+//	grpckit.WithStreamInterceptor(streamInterceptor,
+//	    grpckit.ExceptEndpoints("/item.v1.ItemService/StreamItems"),
+//	)
+func WithStreamInterceptor(interceptor grpc.StreamServerInterceptor, opts ...InterceptorOption) Option {
 	return func(c *serverConfig) {
-		c.streamInterceptors = append(c.streamInterceptors, interceptor)
+		cfg := &interceptorConfig{}
+		for _, opt := range opts {
+			opt(cfg)
+		}
+		c.streamInterceptors = append(c.streamInterceptors, streamInterceptorRegistration{
+			interceptor:     interceptor,
+			exceptEndpoints: cfg.exceptEndpoints,
+		})
 	}
 }
