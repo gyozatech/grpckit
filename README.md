@@ -51,6 +51,42 @@ That's it! Your service is now available via:
 - **gRPC** on port `9090`
 - **REST** on port `8080`
 
+## Multiple Services
+
+Register multiple gRPC services from different proto files.
+
+> **Note**: The function wrapper `func(s grpc.ServiceRegistrar) { ... }` ensures compile-time type checking between your service implementation and the generated interface.
+
+```go
+grpckit.Run(
+    // Register multiple gRPC services
+    grpckit.WithGRPCService(func(s grpc.ServiceRegistrar) {
+        itempb.RegisterItemServiceServer(s, NewItemService())
+    }),
+    grpckit.WithGRPCService(func(s grpc.ServiceRegistrar) {
+        userpb.RegisterUserServiceServer(s, NewUserService())
+    }),
+    grpckit.WithGRPCService(func(s grpc.ServiceRegistrar) {
+        orderpb.RegisterOrderServiceServer(s, NewOrderService())
+    }),
+
+    // Register their REST handlers
+    grpckit.WithRESTService(itempb.RegisterItemServiceHandlerFromEndpoint),
+    grpckit.WithRESTService(userpb.RegisterUserServiceHandlerFromEndpoint),
+    grpckit.WithRESTService(orderpb.RegisterOrderServiceHandlerFromEndpoint),
+
+    // Configuration applies to all services
+    grpckit.WithHealthCheck(),
+    grpckit.WithCORS(),
+)
+```
+
+All services share:
+- Same gRPC port (9090) and HTTP port (8080)
+- Same interceptors and middleware
+- Same authentication configuration
+- Same CORS settings
+
 ## Configuration
 
 ### Functional Options (Recommended)
