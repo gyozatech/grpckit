@@ -562,6 +562,103 @@ server.SetReady(true)  // Mark as ready
 server.Start()
 ```
 
+## Testing
+
+grpckit provides test utilities for in-memory testing without network ports.
+
+### TestServer
+
+`TestServer` wraps the grpckit server with in-memory connections using `bufconn` for gRPC and `httptest` for REST.
+
+```go
+func TestMyService(t *testing.T) {
+    // Create test server (no real ports needed)
+    ts, err := grpckit.NewTestServer(
+        grpckit.WithGRPCService(func(s grpc.ServiceRegistrar) {
+            pb.RegisterMyServiceServer(s, NewMyService())
+        }),
+        grpckit.WithRESTService(pb.RegisterMyServiceHandlerFromEndpoint),
+        grpckit.WithHealthCheck(),
+    )
+    if err != nil {
+        t.Fatal(err)
+    }
+    defer ts.Close()
+
+    // Test gRPC
+    conn := ts.GRPCClientConn(context.Background())
+    client := pb.NewMyServiceClient(conn)
+    resp, err := client.GetItem(ctx, &pb.GetItemRequest{Id: "123"})
+
+    // Test REST
+    httpResp, err := ts.HTTPClient().Get(ts.URL("/api/v1/items/123"))
+
+    // Control readiness during tests
+    ts.SetReady(false)
+    // ... test behavior when not ready ...
+    ts.SetReady(true)
+}
+```
+
+### TestServer Methods
+
+| Method | Description |
+|--------|-------------|
+| `GRPCClientConn(ctx)` | Returns a `*grpc.ClientConn` for in-memory gRPC calls |
+| `HTTPClient()` | Returns an `*http.Client` configured for the test server |
+| `BaseURL()` | Returns the base URL (e.g., `http://127.0.0.1:12345`) |
+| `URL(path)` | Constructs full URL for a path (e.g., `ts.URL("/api/v1/items")`) |
+| `SetReady(bool)` | Controls the readiness state |
+| `Close()` | Shuts down the test server |
+
+### Mock Auth Functions
+
+Easily configure authentication for tests:
+
+```go
+// Accept a single token
+grpckit.WithAuth(grpckit.MockAuthFunc("valid-token", "user-123"))
+
+// Accept multiple tokens with different user IDs
+grpckit.WithAuth(grpckit.MockAuthFuncMultiple(map[string]string{
+    "admin-token": "admin-user",
+    "user-token":  "regular-user",
+}))
+
+// Accept any token (disable auth checks)
+grpckit.WithAuth(grpckit.MockAuthFuncAllowAll())
+```
+
+### Complete Test Example
+
+```go
+func TestItemService_CRUD(t *testing.T) {
+    ts, _ := grpckit.NewTestServer(
+        grpckit.WithGRPCService(func(s grpc.ServiceRegistrar) {
+            pb.RegisterItemServiceServer(s, NewItemService())
+        }),
+        grpckit.WithRESTService(pb.RegisterItemServiceHandlerFromEndpoint),
+        grpckit.WithAuth(grpckit.MockAuthFunc("test-token", "test-user")),
+        grpckit.WithPublicEndpoints("/api/v1/items"), // List is public
+    )
+    defer ts.Close()
+
+    // Test via gRPC
+    client := pb.NewItemServiceClient(ts.GRPCClientConn(context.Background()))
+
+    createResp, err := client.CreateItem(ctx, &pb.CreateItemRequest{
+        Name: "Test Item",
+    })
+    if err != nil {
+        t.Fatalf("CreateItem failed: %v", err)
+    }
+
+    // Test via REST
+    resp, _ := ts.HTTPClient().Get(ts.URL("/api/v1/items"))
+    // ... assert response ...
+}
+```
+
 ## Example
 
 See the [example](./example) directory for a complete working example with:
