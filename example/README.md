@@ -74,6 +74,39 @@ curl -X PUT http://localhost:8080/api/v1/items/{id} \
 curl -X DELETE http://localhost:8080/api/v1/items/{id}
 ```
 
+**Patch an item (form-urlencoded input, XML output):**
+
+This endpoint demonstrates custom content types. Send form data, receive XML:
+
+```bash
+# First create an item to get an ID
+ITEM_ID=$(curl -s -X POST http://localhost:8080/api/v1/items \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Original Name", "description": "Original description"}' \
+  | grep -o '"id":"[^"]*"' | cut -d'"' -f4)
+
+echo "Created item: $ITEM_ID"
+
+# Patch using form-urlencoded input, request XML output
+curl -X PATCH "http://localhost:8080/api/v1/items/${ITEM_ID}" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Accept: application/xml" \
+  -d "name=Patched+Name&description=Updated+via+form"
+```
+
+Response (XML):
+```xml
+<PatchItemResponse>
+  <item>
+    <id>20240115120000.000000</id>
+    <name>Patched Name</name>
+    <description>Updated via form</description>
+    <created_at>1705320000</created_at>
+    <updated_at>1705320060</updated_at>
+  </item>
+</PatchItemResponse>
+```
+
 ### Health & Metrics
 
 **Health check:**
@@ -122,11 +155,21 @@ service ItemService {
       body: "*"
     };
   }
+
+  // PatchItem demonstrates custom content types
+  // Works with form-urlencoded input and XML output
+  rpc PatchItem(PatchItemRequest) returns (PatchItemResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/items/{id}"
+      body: "*"
+    };
+  }
   // ... other methods
 }
 ```
 
 The `google.api.http` annotations define REST endpoints that grpc-gateway generates.
+The content type is determined by HTTP headers, not the proto definition.
 
 ### Service Implementation (`item_service.go`)
 
@@ -154,6 +197,10 @@ func main() {
             pb.RegisterItemServiceServer(s, NewItemService())
         }),
         grpckit.WithRESTService(pb.RegisterItemServiceHandlerFromEndpoint),
+
+        // Custom content types (for PatchItem endpoint)
+        grpckit.WithFormURLEncodedSupport(),  // Accept form data
+        grpckit.WithXMLSupport(),              // Return XML responses
 
         // Enable features
         grpckit.WithHealthCheck(),
@@ -188,8 +235,220 @@ To test with auth:
 curl -H "Authorization: Bearer your-token" http://localhost:8080/api/v1/items
 ```
 
+## Custom Content Types
+
+This example demonstrates grpckit's support for custom content types using the `PatchItem` endpoint.
+
+### Enabling Custom Content Types
+
+In `main.go`, enable the marshalers you need:
+
+```go
+grpckit.Run(
+    grpckit.WithGRPCService(...),
+    grpckit.WithRESTService(...),
+
+    // Enable form-urlencoded input
+    grpckit.WithFormURLEncodedSupport(),
+
+    // Enable XML output
+    grpckit.WithXMLSupport(),
+)
+```
+
+### How It Works
+
+The content type is determined by HTTP headers:
+
+| Header | Purpose | Example |
+|--------|---------|---------|
+| `Content-Type` | Format of request body | `application/x-www-form-urlencoded` |
+| `Accept` | Desired response format | `application/xml` |
+
+### PatchItem Endpoint Demo
+
+The `PatchItem` endpoint (`PATCH /api/v1/items/{id}`) demonstrates:
+- **Input**: `application/x-www-form-urlencoded` (HTML form data)
+- **Output**: `application/xml` (when `Accept: application/xml` header is set)
+
+**Send form data:**
+```bash
+curl -X PATCH "http://localhost:8080/api/v1/items/123" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -H "Accept: application/xml" \
+  -d "name=New+Name&description=Updated+description"
+```
+
+**Form field mapping:**
+- Fields map to proto field names (snake_case)
+- Nested fields: `address.street=123`
+- Repeated fields: `tags=a&tags=b`
+
+### Available Content Types
+
+| Option | Content-Type | Description |
+|--------|--------------|-------------|
+| `WithFormURLEncodedSupport()` | `application/x-www-form-urlencoded` | HTML form submissions |
+| `WithXMLSupport()` | `application/xml` | XML input/output |
+| `WithBinarySupport()` | `application/octet-stream` | Raw binary data |
+| `WithMultipartSupport()` | `multipart/form-data` | File uploads |
+| `WithTextSupport()` | `text/plain` | Plain text |
+
+### Custom JSON Options
+
+Configure JSON behavior:
+
+```go
+grpckit.WithJSONOptions(grpckit.JSONOptions{
+    UseProtoNames:   true,  // snake_case instead of camelCase
+    EmitUnpopulated: true,  // Include zero-value fields
+    Indent:          "  ",  // Pretty print
+})
+```
+
+## Custom HTTP Endpoints (Webhook Example)
+
+This example includes a webhook endpoint that demonstrates custom HTTP handlers outside of proto/gRPC.
+
+### Why Custom HTTP Endpoints?
+
+Some endpoints don't fit the proto model:
+- Webhooks from external services (GitHub, Stripe, etc.)
+- File uploads/downloads
+- Legacy endpoints with specific format requirements
+- Endpoints needing different authentication (e.g., signature validation)
+
+### Webhook Implementation
+
+The `/webhook` endpoint in this example:
+- Is **NOT** in the proto file (pure HTTP, no gRPC exposure)
+- Has its own **dedicated middleware** for signature validation
+- Accepts **any payload format** (not constrained by proto)
+
+**Registration in main.go:**
+
+```go
+grpckit.WithHTTPHandler("/webhook",
+    webhookAuthMiddleware("my-webhook-secret")(
+        http.HandlerFunc(webhookHandler),
+    ),
+),
+```
+
+### Testing the Webhook
+
+**Without signature (rejected):**
+```bash
+curl -X POST http://localhost:8080/webhook \
+  -H "Content-Type: application/json" \
+  -d '{"event": "test"}'
+# Response: 401 Missing webhook signature
+```
+
+**With invalid signature (rejected):**
+```bash
+curl -X POST http://localhost:8080/webhook \
+  -H "Content-Type: application/json" \
+  -H "X-Webhook-Signature: wrong" \
+  -d '{"event": "test"}'
+# Response: 403 Invalid webhook signature
+```
+
+**With valid signature (accepted):**
+```bash
+curl -X POST http://localhost:8080/webhook \
+  -H "Content-Type: application/json" \
+  -H "X-Webhook-Signature: valid-signature" \
+  -d '{"event": "push", "repo": "myrepo"}'
+# Response: {"status": "received", "message": "Webhook processed successfully"}
+```
+
+### Key Differences from Proto Endpoints
+
+| Aspect | Proto Endpoints | Custom HTTP Endpoints |
+|--------|-----------------|----------------------|
+| Definition | In `.proto` file | In Go code |
+| gRPC access | Yes | No (HTTP only) |
+| Input/Output | Constrained by proto | Any format |
+| Middleware | Global only | Per-handler possible |
+| Code generation | Automatic | Manual |
+
+## Custom gRPC Interceptors
+
+This example includes custom gRPC interceptors that apply to ALL gRPC calls.
+
+### Interceptors in This Example
+
+**Logging Interceptor** (`loggingUnaryInterceptor`):
+- Logs when each gRPC method starts and completes
+- Logs errors if they occur
+
+**Timing Interceptor** (`timingUnaryInterceptor`):
+- Measures and logs the duration of each gRPC call
+
+**Stream Logging Interceptor** (`loggingStreamInterceptor`):
+- Logs streaming RPC calls (start/complete/error)
+
+### Registration
+
+```go
+grpckit.Run(
+    // ... services ...
+
+    // Register custom interceptors
+    grpckit.WithUnaryInterceptor(loggingUnaryInterceptor),
+    grpckit.WithUnaryInterceptor(timingUnaryInterceptor),
+    grpckit.WithStreamInterceptor(loggingStreamInterceptor),
+)
+```
+
+### Testing Interceptors
+
+When you make a gRPC call, you'll see interceptor logs:
+
+```bash
+# Using grpcurl
+grpcurl -plaintext -d '{"name": "Test", "description": "A test"}' \
+  localhost:9090 item.v1.ItemService/CreateItem
+```
+
+Server logs:
+```
+[gRPC] Start: /item.v1.ItemService/CreateItem
+[gRPC] Done: /item.v1.ItemService/CreateItem
+[gRPC Timing] /item.v1.ItemService/CreateItem took 1.234ms
+```
+
+### Interceptor Execution Order
+
+```
+gRPC Request
+  ↓
+auth interceptor (built-in)
+  ↓
+loggingUnaryInterceptor (first registered)
+  ↓
+timingUnaryInterceptor (second registered)
+  ↓
+Handler
+  ↓
+Response flows back through interceptors
+```
+
+### HTTP vs gRPC Middleware
+
+| Aspect | HTTP Middleware | gRPC Interceptors |
+|--------|----------------|-------------------|
+| Applies to | HTTP/REST requests | gRPC calls |
+| Registration | `WithHTTPMiddleware()` | `WithUnaryInterceptor()` / `WithStreamInterceptor()` |
+| Type | `func(http.Handler) http.Handler` | `grpc.UnaryServerInterceptor` / `grpc.StreamServerInterceptor` |
+| Access | Request/Response | Context, Request, Info |
+
 ## Customizing
 
 1. **Add new methods**: Update `item.proto`, regenerate with `buf generate`, implement in `item_service.go`
 2. **Change ports**: Use `grpckit.WithGRPCPort()` and `grpckit.WithHTTPPort()`
 3. **Add more services**: Register multiple services with `WithGRPCService()` and `WithRESTService()`
+4. **Add content types**: Use `WithFormURLEncodedSupport()`, `WithXMLSupport()`, etc.
+5. **Add custom HTTP endpoints**: Use `WithHTTPHandler()` or `WithHTTPHandlerFunc()`
+6. **Add gRPC interceptors**: Use `WithUnaryInterceptor()` or `WithStreamInterceptor()`

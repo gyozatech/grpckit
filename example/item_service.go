@@ -106,6 +106,33 @@ func (s *ItemService) DeleteItem(ctx context.Context, req *pb.DeleteItemRequest)
 	return &pb.DeleteItemResponse{Success: true}, nil
 }
 
+// PatchItem partially updates an item (only non-empty fields are updated).
+// This endpoint demonstrates custom content types:
+// - Input: application/x-www-form-urlencoded (form data)
+// - Output: application/xml (when Accept header is set)
+func (s *ItemService) PatchItem(ctx context.Context, req *pb.PatchItemRequest) (*pb.PatchItemResponse, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	item, ok := s.items[req.Id]
+	if !ok {
+		return nil, grpckit.ErrNotFound
+	}
+
+	// Only update fields that are non-empty (partial update)
+	if req.Name != "" {
+		item.Name = req.Name
+	}
+	if req.Description != "" {
+		item.Description = req.Description
+	}
+	item.UpdatedAt = time.Now().Unix()
+
+	log.Printf("Patched item: %s (name=%q, description=%q)", req.Id, req.Name, req.Description)
+
+	return &pb.PatchItemResponse{Item: item}, nil
+}
+
 // generateID generates a simple unique ID.
 func generateID() string {
 	return time.Now().Format("20060102150405.000000")

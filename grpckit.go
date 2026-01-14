@@ -77,12 +77,27 @@ func New(opts ...Option) (*Server, error) {
 
 	// Build gRPC server with interceptors
 	grpcOpts := []grpc.ServerOption{}
+
+	// Build unary interceptor chain: auth (if configured) + custom interceptors
+	var unaryInterceptors []grpc.UnaryServerInterceptor
 	if cfg.authFunc != nil {
-		grpcOpts = append(grpcOpts,
-			grpc.UnaryInterceptor(grpcAuthInterceptor(cfg)),
-			grpc.StreamInterceptor(grpcStreamAuthInterceptor(cfg)),
-		)
+		unaryInterceptors = append(unaryInterceptors, grpcAuthInterceptor(cfg))
 	}
+	unaryInterceptors = append(unaryInterceptors, cfg.unaryInterceptors...)
+	if len(unaryInterceptors) > 0 {
+		grpcOpts = append(grpcOpts, grpc.ChainUnaryInterceptor(unaryInterceptors...))
+	}
+
+	// Build stream interceptor chain: auth (if configured) + custom interceptors
+	var streamInterceptors []grpc.StreamServerInterceptor
+	if cfg.authFunc != nil {
+		streamInterceptors = append(streamInterceptors, grpcStreamAuthInterceptor(cfg))
+	}
+	streamInterceptors = append(streamInterceptors, cfg.streamInterceptors...)
+	if len(streamInterceptors) > 0 {
+		grpcOpts = append(grpcOpts, grpc.ChainStreamInterceptor(streamInterceptors...))
+	}
+
 	grpcServer := grpc.NewServer(grpcOpts...)
 
 	// Register gRPC services
@@ -172,8 +187,8 @@ func (s *Server) startGRPC() error {
 
 // startHTTP starts the HTTP/REST server with grpc-gateway.
 func (s *Server) startHTTP(ctx context.Context) error {
-	// Create grpc-gateway mux
-	gwMux := runtime.NewServeMux()
+	// Create grpc-gateway mux with marshaler options
+	gwMux := runtime.NewServeMux(buildMarshalerOptions(s.cfg)...)
 
 	// Register REST services via grpc-gateway
 	grpcEndpoint := fmt.Sprintf("localhost:%d", s.cfg.grpcPort)
@@ -205,16 +220,28 @@ func (s *Server) startHTTP(ctx context.Context) error {
 		}
 	}
 
-	// Mount grpc-gateway mux for all other paths
+	// Register custom HTTP handlers (before grpc-gateway catch-all)
+	for _, h := range s.cfg.httpHandlers {
+		mux.Handle(h.pattern, h.handler)
+	}
+
+	// Mount grpc-gateway mux for all other paths (catch-all)
 	mux.Handle("/", gwMux)
 
-	// Apply auth middleware
+	// Build middleware chain (applied to ALL HTTP requests)
 	var handler http.Handler = mux
+
+	// Apply custom HTTP middlewares (in reverse order so first registered = outermost)
+	for i := len(s.cfg.httpMiddlewares) - 1; i >= 0; i-- {
+		handler = s.cfg.httpMiddlewares[i](handler)
+	}
+
+	// Apply built-in auth middleware
 	if s.cfg.authFunc != nil {
 		handler = authMiddleware(s.cfg, handler)
 	}
 
-	// Apply metrics middleware
+	// Apply built-in metrics middleware
 	if s.cfg.metricsEnabled && s.metrics != nil {
 		handler = metricsMiddleware(s.metrics, handler)
 	}

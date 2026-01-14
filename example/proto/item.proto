@@ -70,6 +70,22 @@ message DeleteItemResponse {
   bool success = 1;
 }
 
+// PatchItemRequest is the request for partially updating an item.
+// This endpoint demonstrates custom content types:
+// - Input: application/x-www-form-urlencoded
+// - Output: application/xml
+message PatchItemRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+// PatchItemResponse is the response after patching an item.
+// The response will be returned as XML when Accept: application/xml is set.
+message PatchItemResponse {
+  Item item = 1;
+}
+
 // ItemService provides CRUD operations for items.
 service ItemService {
   // CreateItem creates a new item.
@@ -106,6 +122,17 @@ service ItemService {
   rpc DeleteItem(DeleteItemRequest) returns (DeleteItemResponse) {
     option (google.api.http) = {
       delete: "/api/v1/items/{id}"
+    };
+  }
+
+  // PatchItem partially updates an item.
+  // This endpoint demonstrates custom content types:
+  // - Send request with Content-Type: application/x-www-form-urlencoded
+  // - Receive response with Accept: application/xml
+  rpc PatchItem(PatchItemRequest) returns (PatchItemResponse) {
+    option (google.api.http) = {
+      patch: "/api/v1/items/{id}"
+      body: "*"
     };
   }
 }

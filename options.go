@@ -2,6 +2,7 @@ package grpckit
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -24,6 +25,31 @@ type AuthFunc func(ctx context.Context, token string) (context.Context, error)
 // Option is a functional option for configuring the server.
 type Option func(*serverConfig)
 
+// HTTPMiddleware is a function that wraps an http.Handler.
+// Use this to create middleware for HTTP endpoints.
+type HTTPMiddleware func(http.Handler) http.Handler
+
+// httpHandlerRegistration holds a custom HTTP handler registration.
+type httpHandlerRegistration struct {
+	pattern string
+	handler http.Handler
+}
+
+// JSONOptions configures JSON marshaling behavior.
+type JSONOptions struct {
+	// UseProtoNames uses proto field names (snake_case) instead of camelCase
+	UseProtoNames bool
+
+	// EmitUnpopulated emits fields with zero values
+	EmitUnpopulated bool
+
+	// Indent sets indentation for pretty printing (empty = compact)
+	Indent string
+
+	// DiscardUnknown ignores unknown fields during unmarshaling
+	DiscardUnknown bool
+}
+
 // serverConfig holds all configuration for the server.
 type serverConfig struct {
 	// Ports
@@ -45,8 +71,20 @@ type serverConfig struct {
 	swaggerPath    string
 	swaggerEnabled bool
 
-	// Content types
-	contentTypes map[string]string
+	// Marshalers for custom content types
+	marshalers     map[string]runtime.Marshaler
+	jsonOptions    *JSONOptions
+	gatewayOptions []runtime.ServeMuxOption
+
+	// Custom HTTP handlers (not in proto)
+	httpHandlers []httpHandlerRegistration
+
+	// Custom HTTP middleware (applied to ALL HTTP requests)
+	httpMiddlewares []HTTPMiddleware
+
+	// Custom gRPC interceptors (applied to ALL gRPC calls)
+	unaryInterceptors  []grpc.UnaryServerInterceptor
+	streamInterceptors []grpc.StreamServerInterceptor
 
 	// Shutdown
 	gracefulTimeout time.Duration
@@ -63,13 +101,18 @@ type grpcServiceRegistration struct {
 // newServerConfig creates a new server config with default values.
 func newServerConfig() *serverConfig {
 	return &serverConfig{
-		grpcPort:        9090,
-		httpPort:        8080,
-		grpcServices:    make([]grpcServiceRegistration, 0),
-		restServices:    make([]RESTRegistrar, 0),
-		contentTypes:    make(map[string]string),
-		gracefulTimeout: 30 * time.Second,
-		logLevel:        "info",
+		grpcPort:           9090,
+		httpPort:           8080,
+		grpcServices:       make([]grpcServiceRegistration, 0),
+		restServices:       make([]RESTRegistrar, 0),
+		marshalers:         make(map[string]runtime.Marshaler),
+		gatewayOptions:     make([]runtime.ServeMuxOption, 0),
+		httpHandlers:       make([]httpHandlerRegistration, 0),
+		httpMiddlewares:    make([]HTTPMiddleware, 0),
+		unaryInterceptors:  make([]grpc.UnaryServerInterceptor, 0),
+		streamInterceptors: make([]grpc.StreamServerInterceptor, 0),
+		gracefulTimeout:    30 * time.Second,
+		logLevel:           "info",
 	}
 }
 
@@ -187,15 +230,71 @@ func WithSwagger(swaggerJSONPath string) Option {
 	}
 }
 
-// WithContentType sets a custom content type for a specific endpoint pattern.
-// Use this for endpoints that need something other than application/json.
+// WithMarshaler registers a custom marshaler for a specific MIME type.
+// The marshaler handles both request parsing and response formatting.
+// Content-Type header determines which marshaler is used for requests,
+// and Accept header determines which is used for responses.
 //
 // Example:
 //
-//	grpckit.WithContentType("/api/v1/upload", "multipart/form-data")
-func WithContentType(pattern string, contentType string) Option {
+//	grpckit.WithMarshaler("application/msgpack", &MyMsgPackMarshaler{})
+func WithMarshaler(mimeType string, marshaler runtime.Marshaler) Option {
 	return func(c *serverConfig) {
-		c.contentTypes[pattern] = contentType
+		if c.marshalers == nil {
+			c.marshalers = make(map[string]runtime.Marshaler)
+		}
+		c.marshalers[mimeType] = marshaler
+	}
+}
+
+// WithMarshalers registers multiple marshalers at once.
+// Convenience method for registering multiple content types.
+//
+// Example:
+//
+//	grpckit.WithMarshalers(map[string]runtime.Marshaler{
+//	    "application/xml": &grpckit.XMLMarshaler{},
+//	    "text/plain":      &grpckit.TextMarshaler{},
+//	})
+func WithMarshalers(marshalers map[string]runtime.Marshaler) Option {
+	return func(c *serverConfig) {
+		if c.marshalers == nil {
+			c.marshalers = make(map[string]runtime.Marshaler)
+		}
+		for mimeType, marshaler := range marshalers {
+			c.marshalers[mimeType] = marshaler
+		}
+	}
+}
+
+// WithJSONOptions configures the default JSON marshaler with custom options.
+// Use this to customize proto-to-JSON conversion behavior.
+//
+// Example:
+//
+//	grpckit.WithJSONOptions(grpckit.JSONOptions{
+//	    UseProtoNames:   true,  // Use snake_case instead of camelCase
+//	    EmitUnpopulated: true,  // Include fields with zero values
+//	    Indent:          "  ",  // Pretty print with 2-space indent
+//	})
+func WithJSONOptions(opts JSONOptions) Option {
+	return func(c *serverConfig) {
+		c.jsonOptions = &opts
+	}
+}
+
+// WithGatewayOption allows passing raw grpc-gateway ServeMuxOptions.
+// Use this for advanced customization not covered by other options.
+//
+// Example:
+//
+//	grpckit.WithGatewayOption(runtime.WithMarshalerOption(
+//	    "application/json+pretty",
+//	    &runtime.JSONPb{...},
+//	))
+func WithGatewayOption(opt runtime.ServeMuxOption) Option {
+	return func(c *serverConfig) {
+		c.gatewayOptions = append(c.gatewayOptions, opt)
 	}
 }
 
@@ -211,5 +310,112 @@ func WithGracefulShutdown(timeout time.Duration) Option {
 func WithLogLevel(level string) Option {
 	return func(c *serverConfig) {
 		c.logLevel = level
+	}
+}
+
+// WithHTTPHandler registers a custom HTTP handler for a URL pattern.
+// These handlers bypass grpc-gateway and are NOT exposed via gRPC.
+// Use for webhooks, file uploads, or any endpoint that doesn't fit the proto model.
+//
+// Handlers go through the global middleware chain (auth, metrics, custom middleware).
+// For handler-specific middleware, wrap the handler before registering:
+//
+//	grpckit.WithHTTPHandler("/webhook",
+//	    myWebhookMiddleware(http.HandlerFunc(webhookHandler)),
+//	)
+//
+// Example:
+//
+//	grpckit.WithHTTPHandler("/webhook", webhookHandler)
+func WithHTTPHandler(pattern string, handler http.Handler) Option {
+	return func(c *serverConfig) {
+		c.httpHandlers = append(c.httpHandlers, httpHandlerRegistration{
+			pattern: pattern,
+			handler: handler,
+		})
+	}
+}
+
+// WithHTTPHandlerFunc registers a custom HTTP handler function for a URL pattern.
+// This is a convenience wrapper around WithHTTPHandler for http.HandlerFunc.
+//
+// Example:
+//
+//	grpckit.WithHTTPHandlerFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
+//	    // Handle webhook - any input/output format
+//	    body, _ := io.ReadAll(r.Body)
+//	    log.Printf("Webhook: %s", body)
+//	    w.Write([]byte("OK"))
+//	})
+func WithHTTPHandlerFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) Option {
+	return WithHTTPHandler(pattern, http.HandlerFunc(handler))
+}
+
+// WithHTTPMiddleware adds a middleware to the HTTP middleware chain.
+// Middleware is applied to ALL HTTP requests (grpc-gateway, custom handlers, health, etc.)
+// Middleware is applied in the order registered (first registered = outermost).
+//
+// For handler-specific middleware, wrap the handler before registering with WithHTTPHandler.
+//
+// Example:
+//
+//	// Global logging middleware
+//	grpckit.WithHTTPMiddleware(func(next http.Handler) http.Handler {
+//	    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//	        log.Printf("[HTTP] %s %s", r.Method, r.URL.Path)
+//	        next.ServeHTTP(w, r)
+//	    })
+//	})
+func WithHTTPMiddleware(middleware HTTPMiddleware) Option {
+	return func(c *serverConfig) {
+		c.httpMiddlewares = append(c.httpMiddlewares, middleware)
+	}
+}
+
+// WithUnaryInterceptor adds a unary interceptor to the gRPC server.
+// Interceptors are applied to ALL gRPC unary (request-response) calls.
+// Interceptors are applied in the order registered (first registered = outermost).
+//
+// The built-in auth interceptor (if configured) runs before custom interceptors.
+//
+// Example:
+//
+//	// Logging interceptor
+//	grpckit.WithUnaryInterceptor(func(
+//	    ctx context.Context,
+//	    req interface{},
+//	    info *grpc.UnaryServerInfo,
+//	    handler grpc.UnaryHandler,
+//	) (interface{}, error) {
+//	    log.Printf("[gRPC] %s", info.FullMethod)
+//	    return handler(ctx, req)
+//	})
+func WithUnaryInterceptor(interceptor grpc.UnaryServerInterceptor) Option {
+	return func(c *serverConfig) {
+		c.unaryInterceptors = append(c.unaryInterceptors, interceptor)
+	}
+}
+
+// WithStreamInterceptor adds a stream interceptor to the gRPC server.
+// Interceptors are applied to ALL gRPC streaming calls.
+// Interceptors are applied in the order registered (first registered = outermost).
+//
+// The built-in auth interceptor (if configured) runs before custom interceptors.
+//
+// Example:
+//
+//	// Logging interceptor for streams
+//	grpckit.WithStreamInterceptor(func(
+//	    srv interface{},
+//	    ss grpc.ServerStream,
+//	    info *grpc.StreamServerInfo,
+//	    handler grpc.StreamHandler,
+//	) error {
+//	    log.Printf("[gRPC Stream] %s", info.FullMethod)
+//	    return handler(srv, ss)
+//	})
+func WithStreamInterceptor(interceptor grpc.StreamServerInterceptor) Option {
+	return func(c *serverConfig) {
+		c.streamInterceptors = append(c.streamInterceptors, interceptor)
 	}
 }

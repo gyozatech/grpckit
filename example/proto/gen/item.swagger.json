@@ -181,10 +181,59 @@
         "tags": [
           "ItemService"
         ]
+      },
+      "patch": {
+        "summary": "PatchItem partially updates an item.\nThis endpoint demonstrates custom content types:\n- Send request with Content-Type: application/x-www-form-urlencoded\n- Receive response with Accept: application/xml",
+        "operationId": "ItemService_PatchItem",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1PatchItemResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ItemServicePatchItemBody"
+            }
+          }
+        ],
+        "tags": [
+          "ItemService"
+        ]
       }
     }
   },
   "definitions": {
+    "ItemServicePatchItemBody": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "title": "PatchItemRequest is the request for partially updating an item.\nThis endpoint demonstrates custom content types:\n- Input: application/x-www-form-urlencoded\n- Output: application/xml"
+    },
     "ItemServiceUpdateItemBody": {
       "type": "object",
       "properties": {
@@ -302,6 +351,15 @@
         }
       },
       "description": "ListItemsResponse is the response containing a list of items."
+    },
+    "v1PatchItemResponse": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "$ref": "#/definitions/v1Item"
+        }
+      },
+      "description": "PatchItemResponse is the response after patching an item.\nThe response will be returned as XML when Accept: application/xml is set."
     },
     "v1UpdateItemResponse": {
       "type": "object",

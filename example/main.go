@@ -1,12 +1,18 @@
 // Example shows how to use grpckit to build a simple microservice.
 //
-// This example demonstrates a complete CRUD service for items.
+// This example demonstrates:
+// - A complete CRUD service for items (proto-based, gRPC + REST)
+// - Custom content type support (form-urlencoded input, XML output)
+// - Custom HTTP endpoints outside proto (webhook with dedicated middleware)
+// - Custom gRPC interceptors (logging, timing)
+//
 // See item_service.go for the service implementation.
 package main
 
 import (
 	"context"
 	"log"
+	"net/http"
 	"time"
 
 	"github.com/gyozatech/grpckit"
@@ -16,9 +22,6 @@ import (
 
 func main() {
 	log.Println("Starting grpckit example server...")
-
-	// Create the item service
-	//itemService := NewItemService()
 
 	// Example authentication function (optional)
 	authFunc := func(ctx context.Context, token string) (context.Context, error) {
@@ -43,6 +46,37 @@ func main() {
 		grpckit.WithGRPCPort(9090),
 		grpckit.WithHTTPPort(8080),
 
+		// =====================================================
+		// Custom gRPC Interceptors
+		// =====================================================
+		// These interceptors apply to ALL gRPC calls (unary and streaming).
+		// They run AFTER the built-in auth interceptor (if configured).
+		// Order: auth → logging → timing (first registered = outermost)
+		grpckit.WithUnaryInterceptor(loggingUnaryInterceptor),
+		grpckit.WithUnaryInterceptor(timingUnaryInterceptor),
+		grpckit.WithStreamInterceptor(loggingStreamInterceptor),
+
+		// =====================================================
+		// Custom Content Types
+		// =====================================================
+		// Enable form-urlencoded input (for PatchItem endpoint)
+		grpckit.WithFormURLEncodedSupport(),
+
+		// Enable XML output (for PatchItem endpoint response)
+		grpckit.WithXMLSupport(),
+
+		// =====================================================
+		// Custom HTTP Endpoint: Webhook (not in proto)
+		// =====================================================
+		// This endpoint is pure HTTP - not exposed via gRPC.
+		// It has its own dedicated middleware (webhookAuthMiddleware)
+		// that validates X-Webhook-Signature header.
+		grpckit.WithHTTPHandler("/webhook",
+			webhookAuthMiddleware("my-webhook-secret")(
+				http.HandlerFunc(webhookHandler),
+			),
+		),
+
 		// Authentication (optional - comment out to disable)
 		grpckit.WithAuth(authFunc),
 		grpckit.WithPublicEndpoints(
@@ -52,6 +86,7 @@ func main() {
 			"/swagger/*",
 			"/api/v1/items",   // Allow public list
 			"/api/v1/items/*", // Allow public CRUD for demo
+			"/webhook",        // Webhook uses its own auth (signature validation)
 		),
 
 		// Features

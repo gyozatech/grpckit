@@ -589,6 +589,116 @@ func (x *DeleteItemResponse) GetSuccess() bool {
 	return false
 }
 
+// PatchItemRequest is the request for partially updating an item.
+// This endpoint demonstrates custom content types:
+// - Input: application/x-www-form-urlencoded
+// - Output: application/xml
+type PatchItemRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PatchItemRequest) Reset() {
+	*x = PatchItemRequest{}
+	mi := &file_item_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PatchItemRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PatchItemRequest) ProtoMessage() {}
+
+func (x *PatchItemRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_item_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PatchItemRequest.ProtoReflect.Descriptor instead.
+func (*PatchItemRequest) Descriptor() ([]byte, []int) {
+	return file_item_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *PatchItemRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *PatchItemRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *PatchItemRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+// PatchItemResponse is the response after patching an item.
+// The response will be returned as XML when Accept: application/xml is set.
+type PatchItemResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Item          *Item                  `protobuf:"bytes,1,opt,name=item,proto3" json:"item,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PatchItemResponse) Reset() {
+	*x = PatchItemResponse{}
+	mi := &file_item_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PatchItemResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PatchItemResponse) ProtoMessage() {}
+
+func (x *PatchItemResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_item_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PatchItemResponse.ProtoReflect.Descriptor instead.
+func (*PatchItemResponse) Descriptor() ([]byte, []int) {
+	return file_item_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *PatchItemResponse) GetItem() *Item {
+	if x != nil {
+		return x.Item
+	}
+	return nil
+}
+
 var File_item_proto protoreflect.FileDescriptor
 
 const file_item_proto_rawDesc = "" +
@@ -628,7 +738,13 @@ const file_item_proto_rawDesc = "" +
 	"\x11DeleteItemRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\".\n" +
 	"\x12DeleteItemResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xec\x03\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"X\n" +
+	"\x10PatchItemRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\"6\n" +
+	"\x11PatchItemResponse\x12!\n" +
+	"\x04item\x18\x01 \x01(\v2\r.item.v1.ItemR\x04item2\xcf\x04\n" +
 	"\vItemService\x12_\n" +
 	"\n" +
 	"CreateItem\x12\x1a.item.v1.CreateItemRequest\x1a\x1b.item.v1.CreateItemResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/items\x12X\n" +
@@ -637,7 +753,8 @@ const file_item_proto_rawDesc = "" +
 	"\n" +
 	"UpdateItem\x12\x1a.item.v1.UpdateItemRequest\x1a\x1b.item.v1.UpdateItemResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\x1a\x12/api/v1/items/{id}\x12a\n" +
 	"\n" +
-	"DeleteItem\x12\x1a.item.v1.DeleteItemRequest\x1a\x1b.item.v1.DeleteItemResponse\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/api/v1/items/{id}B3Z1github.com/gyozatech/grpckit/example/proto/itempbb\x06proto3"
+	"DeleteItem\x12\x1a.item.v1.DeleteItemRequest\x1a\x1b.item.v1.DeleteItemResponse\"\x1a\x82\xd3\xe4\x93\x02\x14*\x12/api/v1/items/{id}\x12a\n" +
+	"\tPatchItem\x12\x19.item.v1.PatchItemRequest\x1a\x1a.item.v1.PatchItemResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*2\x12/api/v1/items/{id}B3Z1github.com/gyozatech/grpckit/example/proto/itempbb\x06proto3"
 
 var (
 	file_item_proto_rawDescOnce sync.Once
@@ -651,7 +768,7 @@ func file_item_proto_rawDescGZIP() []byte {
 	return file_item_proto_rawDescData
 }
 
-var file_item_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_item_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_item_proto_goTypes = []any{
 	(*Item)(nil),               // 0: item.v1.Item
 	(*CreateItemRequest)(nil),  // 1: item.v1.CreateItemRequest
@@ -664,27 +781,32 @@ var file_item_proto_goTypes = []any{
 	(*UpdateItemResponse)(nil), // 8: item.v1.UpdateItemResponse
 	(*DeleteItemRequest)(nil),  // 9: item.v1.DeleteItemRequest
 	(*DeleteItemResponse)(nil), // 10: item.v1.DeleteItemResponse
+	(*PatchItemRequest)(nil),   // 11: item.v1.PatchItemRequest
+	(*PatchItemResponse)(nil),  // 12: item.v1.PatchItemResponse
 }
 var file_item_proto_depIdxs = []int32{
 	0,  // 0: item.v1.CreateItemResponse.item:type_name -> item.v1.Item
 	0,  // 1: item.v1.GetItemResponse.item:type_name -> item.v1.Item
 	0,  // 2: item.v1.ListItemsResponse.items:type_name -> item.v1.Item
 	0,  // 3: item.v1.UpdateItemResponse.item:type_name -> item.v1.Item
-	1,  // 4: item.v1.ItemService.CreateItem:input_type -> item.v1.CreateItemRequest
-	3,  // 5: item.v1.ItemService.GetItem:input_type -> item.v1.GetItemRequest
-	5,  // 6: item.v1.ItemService.ListItems:input_type -> item.v1.ListItemsRequest
-	7,  // 7: item.v1.ItemService.UpdateItem:input_type -> item.v1.UpdateItemRequest
-	9,  // 8: item.v1.ItemService.DeleteItem:input_type -> item.v1.DeleteItemRequest
-	2,  // 9: item.v1.ItemService.CreateItem:output_type -> item.v1.CreateItemResponse
-	4,  // 10: item.v1.ItemService.GetItem:output_type -> item.v1.GetItemResponse
-	6,  // 11: item.v1.ItemService.ListItems:output_type -> item.v1.ListItemsResponse
-	8,  // 12: item.v1.ItemService.UpdateItem:output_type -> item.v1.UpdateItemResponse
-	10, // 13: item.v1.ItemService.DeleteItem:output_type -> item.v1.DeleteItemResponse
-	9,  // [9:14] is the sub-list for method output_type
-	4,  // [4:9] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	0,  // 4: item.v1.PatchItemResponse.item:type_name -> item.v1.Item
+	1,  // 5: item.v1.ItemService.CreateItem:input_type -> item.v1.CreateItemRequest
+	3,  // 6: item.v1.ItemService.GetItem:input_type -> item.v1.GetItemRequest
+	5,  // 7: item.v1.ItemService.ListItems:input_type -> item.v1.ListItemsRequest
+	7,  // 8: item.v1.ItemService.UpdateItem:input_type -> item.v1.UpdateItemRequest
+	9,  // 9: item.v1.ItemService.DeleteItem:input_type -> item.v1.DeleteItemRequest
+	11, // 10: item.v1.ItemService.PatchItem:input_type -> item.v1.PatchItemRequest
+	2,  // 11: item.v1.ItemService.CreateItem:output_type -> item.v1.CreateItemResponse
+	4,  // 12: item.v1.ItemService.GetItem:output_type -> item.v1.GetItemResponse
+	6,  // 13: item.v1.ItemService.ListItems:output_type -> item.v1.ListItemsResponse
+	8,  // 14: item.v1.ItemService.UpdateItem:output_type -> item.v1.UpdateItemResponse
+	10, // 15: item.v1.ItemService.DeleteItem:output_type -> item.v1.DeleteItemResponse
+	12, // 16: item.v1.ItemService.PatchItem:output_type -> item.v1.PatchItemResponse
+	11, // [11:17] is the sub-list for method output_type
+	5,  // [5:11] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_item_proto_init() }
@@ -698,7 +820,7 @@ func file_item_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_item_proto_rawDesc), len(file_item_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

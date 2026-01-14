@@ -24,6 +24,7 @@ const (
 	ItemService_ListItems_FullMethodName  = "/item.v1.ItemService/ListItems"
 	ItemService_UpdateItem_FullMethodName = "/item.v1.ItemService/UpdateItem"
 	ItemService_DeleteItem_FullMethodName = "/item.v1.ItemService/DeleteItem"
+	ItemService_PatchItem_FullMethodName  = "/item.v1.ItemService/PatchItem"
 )
 
 // ItemServiceClient is the client API for ItemService service.
@@ -42,6 +43,11 @@ type ItemServiceClient interface {
 	UpdateItem(ctx context.Context, in *UpdateItemRequest, opts ...grpc.CallOption) (*UpdateItemResponse, error)
 	// DeleteItem deletes an item by ID.
 	DeleteItem(ctx context.Context, in *DeleteItemRequest, opts ...grpc.CallOption) (*DeleteItemResponse, error)
+	// PatchItem partially updates an item.
+	// This endpoint demonstrates custom content types:
+	// - Send request with Content-Type: application/x-www-form-urlencoded
+	// - Receive response with Accept: application/xml
+	PatchItem(ctx context.Context, in *PatchItemRequest, opts ...grpc.CallOption) (*PatchItemResponse, error)
 }
 
 type itemServiceClient struct {
@@ -102,6 +108,16 @@ func (c *itemServiceClient) DeleteItem(ctx context.Context, in *DeleteItemReques
 	return out, nil
 }
 
+func (c *itemServiceClient) PatchItem(ctx context.Context, in *PatchItemRequest, opts ...grpc.CallOption) (*PatchItemResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PatchItemResponse)
+	err := c.cc.Invoke(ctx, ItemService_PatchItem_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ItemServiceServer is the server API for ItemService service.
 // All implementations must embed UnimplementedItemServiceServer
 // for forward compatibility.
@@ -118,6 +134,11 @@ type ItemServiceServer interface {
 	UpdateItem(context.Context, *UpdateItemRequest) (*UpdateItemResponse, error)
 	// DeleteItem deletes an item by ID.
 	DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error)
+	// PatchItem partially updates an item.
+	// This endpoint demonstrates custom content types:
+	// - Send request with Content-Type: application/x-www-form-urlencoded
+	// - Receive response with Accept: application/xml
+	PatchItem(context.Context, *PatchItemRequest) (*PatchItemResponse, error)
 	mustEmbedUnimplementedItemServiceServer()
 }
 
@@ -142,6 +163,9 @@ func (UnimplementedItemServiceServer) UpdateItem(context.Context, *UpdateItemReq
 }
 func (UnimplementedItemServiceServer) DeleteItem(context.Context, *DeleteItemRequest) (*DeleteItemResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteItem not implemented")
+}
+func (UnimplementedItemServiceServer) PatchItem(context.Context, *PatchItemRequest) (*PatchItemResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PatchItem not implemented")
 }
 func (UnimplementedItemServiceServer) mustEmbedUnimplementedItemServiceServer() {}
 func (UnimplementedItemServiceServer) testEmbeddedByValue()                     {}
@@ -254,6 +278,24 @@ func _ItemService_DeleteItem_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ItemService_PatchItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchItemRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ItemServiceServer).PatchItem(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ItemService_PatchItem_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ItemServiceServer).PatchItem(ctx, req.(*PatchItemRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ItemService_ServiceDesc is the grpc.ServiceDesc for ItemService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -280,6 +322,10 @@ var ItemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteItem",
 			Handler:    _ItemService_DeleteItem_Handler,
+		},
+		{
+			MethodName: "PatchItem",
+			Handler:    _ItemService_PatchItem_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
