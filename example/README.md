@@ -43,12 +43,22 @@ HTTP server listening on :8080
 
 ## Testing the API
 
-### REST Endpoints
+> **Note**: The example configures `/api/v1/items` and `/api/v1/items/*` as public endpoints for demo purposes. If you remove these from `WithPublicEndpoints()`, you'll need to include the `Authorization: Bearer <token>` header.
 
-**Create an item:**
+### REST Endpoints (curl)
+
+**Create an item (public endpoint):**
 ```bash
 curl -X POST http://localhost:8080/api/v1/items \
   -H "Content-Type: application/json" \
+  -d '{"name": "My Item", "description": "A test item"}'
+```
+
+**Create an item (with auth token):**
+```bash
+curl -X POST http://localhost:8080/api/v1/items \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer my-secret-token" \
   -d '{"name": "My Item", "description": "A test item"}'
 ```
 
@@ -66,12 +76,14 @@ curl http://localhost:8080/api/v1/items/{id}
 ```bash
 curl -X PUT http://localhost:8080/api/v1/items/{id} \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer my-secret-token" \
   -d '{"name": "Updated Name", "description": "Updated description"}'
 ```
 
 **Delete an item:**
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/items/{id}
+curl -X DELETE http://localhost:8080/api/v1/items/{id} \
+  -H "Authorization: Bearer my-secret-token"
 ```
 
 **Patch an item (form-urlencoded input, XML output):**
@@ -127,20 +139,56 @@ curl http://localhost:8080/metrics
 
 Open in browser: http://localhost:8080/swagger/
 
-### gRPC
+### gRPC (grpcurl)
 
 Using [grpcurl](https://github.com/fullstorydev/grpcurl):
 
 ```bash
-# List services
+# List services (no auth required for reflection)
 grpcurl -plaintext localhost:9090 list
 
+# Describe a service
+grpcurl -plaintext localhost:9090 describe item.v1.ItemService
+```
+
+**Without authentication (if endpoint is public):**
+```bash
 # Create item
 grpcurl -plaintext -d '{"name": "Test", "description": "A test"}' \
   localhost:9090 item.v1.ItemService/CreateItem
 
 # List items
 grpcurl -plaintext localhost:9090 item.v1.ItemService/ListItems
+
+# Get item
+grpcurl -plaintext -d '{"id": "your-item-id"}' \
+  localhost:9090 item.v1.ItemService/GetItem
+```
+
+**With Bearer token authentication:**
+```bash
+# Create item with auth
+grpcurl -plaintext \
+  -H "Authorization: Bearer my-secret-token" \
+  -d '{"name": "Test", "description": "A test"}' \
+  localhost:9090 item.v1.ItemService/CreateItem
+
+# List items with auth
+grpcurl -plaintext \
+  -H "Authorization: Bearer my-secret-token" \
+  localhost:9090 item.v1.ItemService/ListItems
+
+# Update item with auth
+grpcurl -plaintext \
+  -H "Authorization: Bearer my-secret-token" \
+  -d '{"id": "your-item-id", "name": "Updated", "description": "Updated desc"}' \
+  localhost:9090 item.v1.ItemService/UpdateItem
+
+# Delete item with auth
+grpcurl -plaintext \
+  -H "Authorization: Bearer my-secret-token" \
+  -d '{"id": "your-item-id"}' \
+  localhost:9090 item.v1.ItemService/DeleteItem
 ```
 
 ## Code Walkthrough

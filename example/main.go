@@ -10,7 +10,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"time"
@@ -22,15 +21,6 @@ import (
 
 func main() {
 	log.Println("Starting grpckit example server...")
-
-	// Example authentication function (optional)
-	authFunc := func(ctx context.Context, token string) (context.Context, error) {
-		if token == "" {
-			return nil, grpckit.ErrUnauthorized
-		}
-		// In a real app, validate the token and extract user info
-		return context.WithValue(ctx, "user_id", "user-123"), nil
-	}
 
 	// Run the server
 	if err := grpckit.Run(
@@ -85,7 +75,7 @@ func main() {
 		),
 
 		// Authentication (optional - comment out to disable)
-		grpckit.WithAuth(authFunc),
+		grpckit.WithAuth(AuthFunc),
 		grpckit.WithPublicEndpoints(
 			"/healthz",
 			"/readyz",

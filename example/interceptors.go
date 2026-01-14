@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gyozatech/grpckit"
 	"google.golang.org/grpc"
 )
 
@@ -58,4 +59,17 @@ func loggingStreamInterceptor(
 		log.Printf("[gRPC Stream] Done: %s", info.FullMethod)
 	}
 	return err
+}
+
+/* not really an interceptor but this function is applied
+   by the built-in grpckit.WithAuth() function to the
+   grpcAuthInterceptor provided by this library when you natively enable Auth */
+
+// Example authentication function (optional)
+func AuthFunc(ctx context.Context, token string) (context.Context, error) {
+	if token == "" {
+		return nil, grpckit.ErrUnauthorized
+	}
+	// In a real app, validate the token and extract user info
+	return context.WithValue(ctx, "user_id", "user-123"), nil
 }

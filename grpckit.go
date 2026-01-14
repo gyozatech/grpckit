@@ -17,7 +17,8 @@
 // # Features
 //
 // grpckit supports:
-//   - gRPC and REST (via grpc-gateway) on separate ports
+//   - gRPC and REST (via grpc-gateway) on separate or same port
+//   - Single port mode with automatic h2c multiplexing
 //   - Health checks (/healthz, /readyz)
 //   - Prometheus metrics (/metrics)
 //   - Swagger UI (/swagger/)
@@ -40,9 +41,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -152,15 +156,22 @@ func (s *Server) Start() error {
 
 	g, ctx := errgroup.WithContext(ctx)
 
-	// Start gRPC server
-	g.Go(func() error {
-		return s.startGRPC()
-	})
+	// Check if same-port mode (gRPC and HTTP on same port)
+	if s.cfg.grpcPort == s.cfg.httpPort {
+		// Same-port mode: use h2c multiplexing
+		g.Go(func() error {
+			return s.startCombined(ctx)
+		})
+	} else {
+		// Separate ports mode: start each server independently
+		g.Go(func() error {
+			return s.startGRPC()
+		})
 
-	// Start HTTP server
-	g.Go(func() error {
-		return s.startHTTP(ctx)
-	})
+		g.Go(func() error {
+			return s.startHTTP(ctx)
+		})
+	}
 
 	// Wait for shutdown signal
 	g.Go(func() error {
@@ -263,6 +274,101 @@ func (s *Server) startHTTP(ctx context.Context) error {
 	}
 
 	log.Printf("HTTP server listening on %s", addr)
+	if err := s.httpServer.ListenAndServe(); err != http.ErrServerClosed {
+		return err
+	}
+	return nil
+}
+
+// startCombined starts a combined gRPC + HTTP server on a single port using h2c.
+// This allows both gRPC and REST to be served on the same port.
+func (s *Server) startCombined(ctx context.Context) error {
+	// Build the HTTP handler (same as startHTTP)
+	gwMux := runtime.NewServeMux(buildMarshalerOptions(s.cfg)...)
+
+	// Register REST services via grpc-gateway
+	// In combined mode, we connect to ourselves via the same port
+	grpcEndpoint := fmt.Sprintf("localhost:%d", s.cfg.grpcPort)
+	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
+	for _, registrar := range s.cfg.restServices {
+		if err := registrar(ctx, gwMux, grpcEndpoint, opts); err != nil {
+			return fmt.Errorf("failed to register REST service: %w", err)
+		}
+	}
+
+	// Create main HTTP mux
+	mux := http.NewServeMux()
+
+	// Register health endpoints
+	if s.cfg.healthEnabled {
+		registerHealthEndpoints(mux, s.healthHandler)
+	}
+
+	// Register metrics endpoint
+	if s.cfg.metricsEnabled {
+		registerMetricsEndpoint(mux)
+	}
+
+	// Register swagger endpoints
+	if s.cfg.swaggerEnabled && s.cfg.swaggerPath != "" {
+		if err := registerSwaggerEndpoints(mux, s.cfg.swaggerPath); err != nil {
+			log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+		}
+	}
+
+	// Register custom HTTP handlers (before grpc-gateway catch-all)
+	for _, h := range s.cfg.httpHandlers {
+		mux.Handle(h.pattern, h.handler)
+	}
+
+	// Mount grpc-gateway mux for all other paths (catch-all)
+	mux.Handle("/", gwMux)
+
+	// Build middleware chain (applied to ALL HTTP requests)
+	var httpHandler http.Handler = mux
+
+	// Apply custom HTTP middlewares (in reverse order so first registered = outermost)
+	for i := len(s.cfg.httpMiddlewares) - 1; i >= 0; i-- {
+		httpHandler = s.cfg.httpMiddlewares[i](httpHandler)
+	}
+
+	// Apply built-in auth middleware
+	if s.cfg.authFunc != nil {
+		httpHandler = authMiddleware(s.cfg, httpHandler)
+	}
+
+	// Apply built-in metrics middleware
+	if s.cfg.metricsEnabled && s.metrics != nil {
+		httpHandler = metricsMiddleware(s.metrics, httpHandler)
+	}
+
+	// Apply built-in CORS middleware (outermost, handles preflight OPTIONS)
+	if s.cfg.corsEnabled && s.cfg.corsConfig != nil {
+		httpHandler = corsMiddleware(*s.cfg.corsConfig)(httpHandler)
+	}
+
+	// Create a combined handler that routes gRPC and HTTP requests
+	combinedHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check if this is a gRPC request
+		if r.ProtoMajor == 2 && strings.HasPrefix(r.Header.Get("Content-Type"), "application/grpc") {
+			s.grpcServer.ServeHTTP(w, r)
+		} else {
+			httpHandler.ServeHTTP(w, r)
+		}
+	})
+
+	// Wrap with h2c handler for HTTP/2 cleartext support
+	h2cHandler := h2c.NewHandler(combinedHandler, &http2.Server{})
+
+	// Create HTTP server
+	addr := fmt.Sprintf(":%d", s.cfg.grpcPort)
+	s.httpServer = &http.Server{
+		Addr:    addr,
+		Handler: h2cHandler,
+	}
+
+	log.Printf("gRPC + HTTP server listening on %s (combined mode)", addr)
 	if err := s.httpServer.ListenAndServe(); err != http.ErrServerClosed {
 		return err
 	}

@@ -99,8 +99,8 @@ grpckit.Run(
     }),
     grpckit.WithRESTService(pb.RegisterMyServiceHandlerFromEndpoint),
 
-    // Ports
-    grpckit.WithGRPCPort(9090),
+    // Ports (use same port for combined gRPC + REST)
+    grpckit.WithGRPCPort(8080),
     grpckit.WithHTTPPort(8080),
 
     // Authentication
@@ -162,6 +162,24 @@ grpckit.Run(
     // ... other options override config file
 )
 ```
+
+## Single Port Mode
+
+By default, gRPC and HTTP/REST run on separate ports. To run both on the **same port**, simply set them to the same value:
+
+```go
+grpckit.WithGRPCPort(8080),
+grpckit.WithHTTPPort(8080),
+```
+
+When the ports match, grpckit automatically uses HTTP/2 cleartext (h2c) multiplexing to route:
+- `Content-Type: application/grpc` → gRPC server
+- Everything else → REST/HTTP handler
+
+This is useful for:
+- Simplified deployment (single port to expose)
+- Kubernetes services with single port
+- Load balancers that only support one backend port
 
 ## Authentication
 
