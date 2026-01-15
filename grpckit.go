@@ -229,9 +229,15 @@ func (s *Server) startHTTP(ctx context.Context) error {
 	}
 
 	// Register swagger endpoints
-	if s.cfg.swaggerEnabled && s.cfg.swaggerPath != "" {
-		if err := registerSwaggerEndpoints(mux, s.cfg.swaggerPath); err != nil {
-			log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+	if s.cfg.swaggerEnabled {
+		if len(s.cfg.swaggerData) > 0 {
+			if err := registerSwaggerEndpointsFromBytes(mux, s.cfg.swaggerData); err != nil {
+				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+			}
+		} else if s.cfg.swaggerPath != "" {
+			if err := registerSwaggerEndpoints(mux, s.cfg.swaggerPath); err != nil {
+				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+			}
 		}
 	}
 
@@ -311,9 +317,15 @@ func (s *Server) startCombined(ctx context.Context) error {
 	}
 
 	// Register swagger endpoints
-	if s.cfg.swaggerEnabled && s.cfg.swaggerPath != "" {
-		if err := registerSwaggerEndpoints(mux, s.cfg.swaggerPath); err != nil {
-			log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+	if s.cfg.swaggerEnabled {
+		if len(s.cfg.swaggerData) > 0 {
+			if err := registerSwaggerEndpointsFromBytes(mux, s.cfg.swaggerData); err != nil {
+				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+			}
+		} else if s.cfg.swaggerPath != "" {
+			if err := registerSwaggerEndpoints(mux, s.cfg.swaggerPath); err != nil {
+				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
+			}
 		}
 	}
 

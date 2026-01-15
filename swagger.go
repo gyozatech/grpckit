@@ -48,7 +48,7 @@ type swaggerHandler struct {
 	fs       embed.FS
 }
 
-// newSwaggerHandler creates a new Swagger handler.
+// newSwaggerHandler creates a new Swagger handler from a file path.
 func newSwaggerHandler(specPath string) (*swaggerHandler, error) {
 	// Read the OpenAPI spec file
 	data, err := os.ReadFile(specPath)
@@ -64,6 +64,19 @@ func newSwaggerHandler(specPath string) (*swaggerHandler, error) {
 
 	return &swaggerHandler{
 		specPath: specPath,
+		specData: data,
+	}, nil
+}
+
+// newSwaggerHandlerFromBytes creates a new Swagger handler from embedded data.
+func newSwaggerHandlerFromBytes(data []byte) (*swaggerHandler, error) {
+	// Validate it's valid JSON
+	var js json.RawMessage
+	if err := json.Unmarshal(data, &js); err != nil {
+		return nil, err
+	}
+
+	return &swaggerHandler{
 		specData: data,
 	}, nil
 }
@@ -95,13 +108,30 @@ func (s *swaggerHandler) SpecHandler() http.HandlerFunc {
 	}
 }
 
-// registerSwaggerEndpoints registers Swagger endpoints on the mux.
+// registerSwaggerEndpoints registers Swagger endpoints on the mux from a file path.
 func registerSwaggerEndpoints(mux *http.ServeMux, specPath string) error {
 	handler, err := newSwaggerHandler(specPath)
 	if err != nil {
 		return err
 	}
 
+	registerSwaggerHandler(mux, handler)
+	return nil
+}
+
+// registerSwaggerEndpointsFromBytes registers Swagger endpoints from embedded data.
+func registerSwaggerEndpointsFromBytes(mux *http.ServeMux, data []byte) error {
+	handler, err := newSwaggerHandlerFromBytes(data)
+	if err != nil {
+		return err
+	}
+
+	registerSwaggerHandler(mux, handler)
+	return nil
+}
+
+// registerSwaggerHandler registers the swagger handler on the mux.
+func registerSwaggerHandler(mux *http.ServeMux, handler *swaggerHandler) {
 	mux.HandleFunc("/swagger/", func(w http.ResponseWriter, r *http.Request) {
 		path := strings.TrimPrefix(r.URL.Path, "/swagger")
 		if path == "" || path == "/" {
@@ -114,6 +144,4 @@ func registerSwaggerEndpoints(mux *http.ServeMux, specPath string) error {
 		}
 		http.NotFound(w, r)
 	})
-
-	return nil
 }

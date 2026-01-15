@@ -103,6 +103,7 @@ type serverConfig struct {
 	healthEnabled  bool
 	metricsEnabled bool
 	swaggerPath    string
+	swaggerData    []byte
 	swaggerEnabled bool
 	corsEnabled    bool
 	corsConfig     *CORSConfig
@@ -299,6 +300,20 @@ func WithSwagger(swaggerJSONPath string) Option {
 	return func(c *serverConfig) {
 		c.swaggerEnabled = true
 		c.swaggerPath = swaggerJSONPath
+	}
+}
+
+// WithSwaggerBytes enables the Swagger UI using embedded swagger data.
+// This allows importing swagger as a Go dependency, versioned alongside protos.
+//
+// Example:
+//
+//	import swaggerpkg "git.example.com/org/api/swagger"
+//	grpckit.WithSwaggerBytes(swaggerpkg.SwaggerJSON)
+func WithSwaggerBytes(data []byte) Option {
+	return func(c *serverConfig) {
+		c.swaggerEnabled = true
+		c.swaggerData = data
 	}
 }
 

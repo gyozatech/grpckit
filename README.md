@@ -26,6 +26,160 @@ A dead-simple Go library for building gRPC + REST microservices with [grpc-gatew
 go get github.com/gyozatech/grpckit
 ```
 
+## Create a New Service
+
+Use the included generator script to create a complete service boilerplate:
+
+```bash
+# Download the script (or clone the repo)
+curl -O https://raw.githubusercontent.com/gyozatech/grpckit/main/scripts/create-service.sh
+chmod +x create-service.sh
+
+# Generate a new service (both formats work)
+./create-service.sh --name=user --module=github.com/myorg/user-service
+./create-service.sh --name user --module github.com/myorg/user-service --output ./user-service
+
+# Use an existing proto file
+./create-service.sh --proto=https://example.com/api.proto --module=github.com/myorg/api-service
+./create-service.sh --proto=./path/to/service.proto --module=github.com/myorg/my-service
+
+# With external proto and explicit go_package
+./create-service.sh \
+  --proto=https://git.example.com/repo/-/raw/main/api/v1/service.proto \
+  --module=github.com/myorg/my-service \
+  --go-package=git.example.com/repo/clients/api/v1/api-go \
+  --grpckit-version=v0.0.2
+
+# With custom ports and swagger from a Go package
+./create-service.sh \
+  --name=user \
+  --module=github.com/myorg/user-service \
+  --grpc-port=50051 \
+  --http-port=8081 \
+  --swagger=git.example.com/org/api/swagger
+```
+
+### Swagger as a Go Dependency
+
+When `--swagger` is specified, it should be the **Go import path** of a package that exports `SwaggerJSON []byte`. This allows the swagger spec to be:
+- Versioned alongside the proto (same module, same version)
+- Imported as a normal Go dependency
+- Updated automatically when you bump the module version in `go.mod`
+
+The proto repository should have a package that embeds and exports the swagger:
+
+```go
+// In git.example.com/org/api/swagger/swagger.go
+package swagger
+
+import _ "embed"
+
+//go:embed swagger.json
+var SwaggerJSON []byte
+```
+
+Then your service imports it like any other dependency:
+
+```go
+import swaggerpkg "git.example.com/org/api/swagger"
+
+grpckit.WithSwaggerBytes(swaggerpkg.SwaggerJSON)
+```
+
+If the swagger is in the **same package** as the proto's generated code, you can use the same import path as `--go-package`:
+
+```bash
+./create-service.sh \
+  --proto=https://git.example.com/org/api/service.proto \
+  --go-package=git.example.com/org/api/gen \
+  --swagger=git.example.com/org/api/gen  # Same package - uses pb.SwaggerJSON
+```
+
+### Script Arguments
+
+All arguments support both `--arg value` and `--arg=value` formats.
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--name, -n` | Yes* | Service name (e.g., "user", "order"). *Not required if `--proto` is specified |
+| `--module, -m` | Yes | Go module path |
+| `--output, -o` | No | Output directory (default: `./<name>-service`) |
+| `--proto, -p` | No | URL or path to an existing proto file to use |
+| `--go-package` | No | Go import path for the proto's generated code. Required if proto doesn't have `go_package` option |
+| `--grpckit-version` | No | grpckit version (e.g., "v0.0.2"). If not specified, uses placeholder for `go mod tidy` |
+| `--swagger` | No | Go import path of package exporting `SwaggerJSON []byte` (versioned with proto) |
+| `--grpc-port` | No | gRPC port (default: 9090) |
+| `--http-port` | No | HTTP port (default: 8080) |
+
+### Using an Existing Proto File
+
+When `--proto` is specified, the script:
+1. Reads the proto file (from URL or local path) to extract service info
+2. Extracts service name, package, and `go_package` from the proto
+3. Generates a service stub importing the proto's `go_package`
+4. Creates `main.go` configured for the detected service (with all optional features documented)
+5. Does **not** copy the proto file - you manage it externally
+
+```bash
+# From URL (proto has go_package option)
+./create-service.sh --proto=https://raw.githubusercontent.com/example/api/main/service.proto \
+  --module=github.com/myorg/service
+
+# From local file
+./create-service.sh --proto=../shared/protos/user.proto --module=github.com/myorg/user-service
+
+# When proto doesn't have go_package or you need to override it
+./create-service.sh \
+  --proto=https://git.example.com/org/repo/-/raw/main/apis/v1/role.proto \
+  --module=github.com/myorg/role-service \
+  --go-package=git.example.com/org/repo/clients/v1/role-go \
+  --grpckit-version=v0.0.2
+```
+
+The generated code imports the proto package directly, so ensure the generated proto code is available as a Go module (via go.mod replace directive, git submodule, or published module).
+
+**Note**: If the proto file doesn't contain a `go_package` option, you must provide `--go-package` with the import path where the generated Go code is published.
+
+### Generated Structure
+
+**Default (without `--proto`):**
+```
+my-service/
+├── main.go                      # Entry point with all options documented
+├── internal/
+│   └── service/
+│       └── <name>_service.go    # Full service implementation
+├── proto/
+│   ├── <name>.proto             # Proto definition with REST annotations
+│   ├── buf.yaml                 # Buf configuration
+│   ├── buf.gen.yaml             # Code generation config
+│   └── gen/                     # Generated code (after buf generate)
+├── Makefile                     # Build commands
+├── go.mod
+└── README.md
+```
+
+**With `--proto` (external proto):**
+```
+my-service/
+├── main.go                      # Entry point importing external proto package
+├── internal/
+│   └── service/
+│       └── <name>_service.go    # Service stub with TODOs
+├── Makefile                     # Build commands
+├── go.mod
+└── README.md
+```
+
+### What's Included
+
+The generated `main.go` has:
+- **Basic options enabled**: Health checks, graceful shutdown
+- **Optional features commented out**: Metrics, Swagger, CORS, auth, interceptors, etc.
+- **Detailed comments** explaining each option
+
+Simply uncomment the features you need.
+
 ## Quick Start
 
 ```go
