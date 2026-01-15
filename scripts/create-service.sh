@@ -1189,10 +1189,19 @@ swagger:
 	@mkdir -p api
 	@SWAGGER_URL="$(SWAGGER_URL)"; \
 	PROVIDER="$(SWAGGER_GIT_PROVIDER)"; \
+	NEED_AUTH=false; \
 	if curl -fsSL "$$SWAGGER_URL" -o $(SWAGGER_FILE) 2>/dev/null; then \
-		echo "Fetched swagger (public URL)"; \
+		if head -c 1 $(SWAGGER_FILE) | grep -q '"'"'[{[]'"'"'; then \
+			echo "Fetched swagger (public URL)"; \
+		else \
+			echo "Got non-JSON response (likely login page), trying with auth..."; \
+			NEED_AUTH=true; \
+		fi; \
 	else \
 		echo "Public fetch failed, trying with authentication..."; \
+		NEED_AUTH=true; \
+	fi; \
+	if [ "$$NEED_AUTH" = "true" ]; then \
 		if [ -z "$$PROVIDER" ]; then \
 			if echo "$$SWAGGER_URL" | grep -qE '"'"'github\.com|raw\.githubusercontent\.com'"'"'; then \
 				PROVIDER="github"; \
