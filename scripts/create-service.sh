@@ -31,6 +31,7 @@ PROTO_URL=""
 GO_PACKAGE=""
 GRPCKIT_VERSION=""
 SWAGGER_URL=""
+SWAGGER_GIT_PROVIDER=""
 GRPC_PORT="9090"
 HTTP_PORT="8080"
 
@@ -57,6 +58,8 @@ Optional arguments:
                                 If not specified, uses placeholder for go mod tidy
   --swagger=<url>               URL to swagger JSON file, fetched at build time
                                 via 'make swagger' and embedded into the binary
+  --swagger-git-provider=<p>    Git provider for swagger auth: "github", "gitlab", "bitbucket"
+                                If not specified, auto-detects from URL pattern
   --grpc-port=<port>            gRPC port (default: 9090)
   --http-port=<port>            HTTP port (default: 8080)
   --help, -h                    Show this help message
@@ -156,6 +159,14 @@ parse_args() {
                 ;;
             --swagger)
                 SWAGGER_URL="$2"
+                shift 2
+                ;;
+            --swagger-git-provider=*)
+                SWAGGER_GIT_PROVIDER=$(extract_value "$1")
+                shift
+                ;;
+            --swagger-git-provider)
+                SWAGGER_GIT_PROVIDER="$2"
                 shift 2
                 ;;
             --grpc-port=*)
@@ -1167,29 +1178,80 @@ generate_makefile() {
         swagger_phony=" swagger"
         swagger_var="
 SWAGGER_URL := ${SWAGGER_URL}
-SWAGGER_FILE := api/swagger.json"
+SWAGGER_FILE := api/swagger.json
+SWAGGER_GIT_PROVIDER := ${SWAGGER_GIT_PROVIDER}"
         swagger_dep=" swagger"
         swagger_target='
 # Fetch swagger spec and generate embedding code
+# Supports GitHub, GitLab, Bitbucket with auto-detection or explicit --swagger-git-provider
 swagger:
 	@echo "Fetching swagger spec..."
 	@mkdir -p api
 	@SWAGGER_URL="$(SWAGGER_URL)"; \
-		SWAGGER_HOST=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://([^/]+).*|\1|'"'"'); \
-		GITLAB_TOKEN=$$(glab config get token --host "$$SWAGGER_HOST" 2>/dev/null); \
-		if [ -n "$$GITLAB_TOKEN" ] && echo "$$SWAGGER_URL" | grep -q '"'"'/-/raw/'"'"'; then \
-			echo "Using glab token for $$SWAGGER_HOST (converting to API URL)"; \
-			PROJECT=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/([^/]+/[^/]+)/-/raw/.*|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
-			BRANCH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/([^/]+)/.*|\1|'"'"'); \
-			FILEPATH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/[^/]+/(.*)|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
-			API_URL="https://$$SWAGGER_HOST/api/v4/projects/$$PROJECT/repository/files/$$FILEPATH/raw?ref=$$BRANCH"; \
-			curl -fsSL -H "PRIVATE-TOKEN: $$GITLAB_TOKEN" "$$API_URL" -o $(SWAGGER_FILE); \
-		elif [ -n "$$GITLAB_TOKEN" ]; then \
-			echo "Using glab token for $$SWAGGER_HOST"; \
-			curl -fsSL -H "PRIVATE-TOKEN: $$GITLAB_TOKEN" "$$SWAGGER_URL" -o $(SWAGGER_FILE); \
+	PROVIDER="$(SWAGGER_GIT_PROVIDER)"; \
+	if curl -fsSL "$$SWAGGER_URL" -o $(SWAGGER_FILE) 2>/dev/null; then \
+		echo "Fetched swagger (public URL)"; \
+	else \
+		echo "Public fetch failed, trying with authentication..."; \
+		if [ -z "$$PROVIDER" ]; then \
+			if echo "$$SWAGGER_URL" | grep -qE '"'"'github\.com|raw\.githubusercontent\.com'"'"'; then \
+				PROVIDER="github"; \
+			elif echo "$$SWAGGER_URL" | grep -qE '"'"'gitlab\.com|/-/raw/'"'"'; then \
+				PROVIDER="gitlab"; \
+			elif echo "$$SWAGGER_URL" | grep -q '"'"'bitbucket\.org'"'"'; then \
+				PROVIDER="bitbucket"; \
+			fi; \
+			if [ -n "$$PROVIDER" ]; then echo "Auto-detected provider: $$PROVIDER"; fi; \
 		else \
-			curl -fsSL "$$SWAGGER_URL" -o $(SWAGGER_FILE); \
-		fi || (echo "Failed to fetch swagger. Check URL, network access, or run: glab auth login --hostname <host>" && exit 1)
+			echo "Using specified provider: $$PROVIDER"; \
+		fi; \
+		TOKEN=""; \
+		AUTH_HEADER=""; \
+		FETCH_URL="$$SWAGGER_URL"; \
+		case "$$PROVIDER" in \
+			github) \
+				TOKEN=$$(gh auth token 2>/dev/null); \
+				if [ -n "$$TOKEN" ]; then AUTH_HEADER="Authorization: Bearer $$TOKEN"; fi; \
+				;; \
+			gitlab) \
+				HOST=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://([^/]+).*|\1|'"'"'); \
+				TOKEN=$$(glab config get token --host "$$HOST" 2>/dev/null); \
+				if [ -n "$$TOKEN" ]; then \
+					AUTH_HEADER="PRIVATE-TOKEN: $$TOKEN"; \
+					if echo "$$SWAGGER_URL" | grep -q '"'"'/-/raw/'"'"'; then \
+						PROJECT=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/([^/]+/[^/]+)/-/raw/.*|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+						BRANCH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/([^/]+)/.*|\1|'"'"'); \
+						FILEPATH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/[^/]+/(.*)|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+						FETCH_URL="https://$$HOST/api/v4/projects/$$PROJECT/repository/files/$$FILEPATH/raw?ref=$$BRANCH"; \
+					fi; \
+				fi; \
+				;; \
+			bitbucket) \
+				TOKEN="$$BITBUCKET_TOKEN"; \
+				if [ -n "$$TOKEN" ]; then AUTH_HEADER="Authorization: Bearer $$TOKEN"; fi; \
+				;; \
+			*) \
+				TOKEN="$$SWAGGER_TOKEN"; \
+				if [ -n "$$TOKEN" ]; then AUTH_HEADER="Authorization: Bearer $$TOKEN"; fi; \
+				;; \
+		esac; \
+		if [ -n "$$TOKEN" ]; then \
+			echo "Fetching with $$PROVIDER authentication..."; \
+			curl -fsSL -H "$$AUTH_HEADER" "$$FETCH_URL" -o $(SWAGGER_FILE) || \
+				(echo "Failed to fetch swagger. Check URL or token." && exit 1); \
+		else \
+			echo ""; \
+			echo "ERROR: No token found for authentication."; \
+			echo ""; \
+			echo "For private repositories, authenticate with your provider CLI:"; \
+			echo "  GitHub:    gh auth login"; \
+			echo "  GitLab:    glab auth login --hostname <host>"; \
+			echo "  Bitbucket: export BITBUCKET_TOKEN=<token>"; \
+			echo "  Other:     export SWAGGER_TOKEN=<token>"; \
+			echo ""; \
+			exit 1; \
+		fi; \
+	fi
 	@echo "Generating swagger_gen.go..."
 	@echo "package main" > swagger_gen.go
 	@echo "" >> swagger_gen.go
@@ -1539,6 +1601,9 @@ main() {
     fi
     if [[ -n "$SWAGGER_URL" ]]; then
         print_info "Swagger:      $SWAGGER_URL"
+        if [[ -n "$SWAGGER_GIT_PROVIDER" ]]; then
+            print_info "Swagger auth: $SWAGGER_GIT_PROVIDER"
+        fi
     fi
     echo ""
 

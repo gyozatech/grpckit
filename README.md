@@ -86,6 +86,24 @@ make build
 make swagger
 ```
 
+#### Private Repository Authentication
+
+For private repos, `make swagger` automatically detects the git provider and retrieves tokens:
+
+| Provider | Auto-Detection | Token Source | Setup Command |
+|----------|----------------|--------------|---------------|
+| GitHub | `github.com`, `raw.githubusercontent.com` | `gh auth token` | `gh auth login` |
+| GitLab | `gitlab.com`, `/-/raw/` pattern | `glab config get token` | `glab auth login --hostname <host>` |
+| Bitbucket | `bitbucket.org` | `$BITBUCKET_TOKEN` env var | `export BITBUCKET_TOKEN=<token>` |
+| Other | - | `$SWAGGER_TOKEN` env var | `export SWAGGER_TOKEN=<token>` |
+
+You can also explicitly specify the provider:
+```bash
+./create-service.sh --swagger=https://... --swagger-git-provider=gitlab
+```
+
+**Security:** Tokens are retrieved at build time only from CLI configs or environment variables. They are **never** written to any file or committed.
+
 ### Script Arguments
 
 All arguments support both `--arg value` and `--arg=value` formats.
@@ -99,6 +117,7 @@ All arguments support both `--arg value` and `--arg=value` formats.
 | `--go-package` | No | Go import path for the proto's generated code. Required if proto doesn't have `go_package` option |
 | `--grpckit-version` | No | grpckit version (e.g., "v0.0.2"). If not specified, uses placeholder for `go mod tidy` |
 | `--swagger` | No | URL to swagger JSON file, fetched at build time and embedded into binary |
+| `--swagger-git-provider` | No | Git provider for swagger auth: `github`, `gitlab`, `bitbucket`. Auto-detects if not specified |
 | `--grpc-port` | No | gRPC port (default: 9090) |
 | `--http-port` | No | HTTP port (default: 8080) |
 
