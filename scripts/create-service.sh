@@ -55,8 +55,8 @@ Optional arguments:
                                 Required if proto doesn't have go_package option
   --grpckit-version=<ver>       grpckit version (e.g., "v0.0.2")
                                 If not specified, uses placeholder for go mod tidy
-  --swagger=<import-path>       Go import path of package exporting SwaggerJSON []byte
-                                Imported as a dependency, versioned with the proto
+  --swagger=<url>               URL to swagger JSON file, fetched at build time
+                                via 'make swagger' and embedded into the binary
   --grpc-port=<port>            gRPC port (default: 9090)
   --http-port=<port>            HTTP port (default: 8080)
   --help, -h                    Show this help message
@@ -254,6 +254,11 @@ create_directories() {
     # Only create proto directory if we're generating a proto file
     if [[ -z "$PROTO_URL" ]]; then
         mkdir -p "${OUTPUT_DIR}/proto/gen"
+    fi
+
+    # Create api directory if swagger is enabled
+    if [[ -n "$SWAGGER_URL" ]]; then
+        mkdir -p "${OUTPUT_DIR}/api"
     fi
 
     print_success "Directory structure created"
@@ -586,7 +591,7 @@ generate_service_stub() {
 package service
 
 import (
-	"context"
+	// "context"
 
 	pb "${PROTO_GO_PACKAGE}"
 )
@@ -603,6 +608,7 @@ func New${actual_service_name}() *${actual_service_name}Impl {
 }
 
 // TODO: Implement the RPC methods from your proto file.
+// NOTE: Uncomment "context" import above when implementing methods.
 // Example:
 //
 // func (s *${actual_service_name}Impl) YourMethod(ctx context.Context, req *pb.YourRequest) (*pb.YourResponse, error) {
@@ -744,29 +750,23 @@ generate_main_for_external_proto() {
 
     # Build swagger section based on whether SWAGGER_URL is provided
     local swagger_import=""
+    local swagger_embed=""
     local swagger_line
-    local swagger_var="pb.SwaggerJSON"  # Default: same package as proto
 
     if [[ -n "$SWAGGER_URL" ]]; then
-        if [[ "$SWAGGER_URL" == "$PROTO_GO_PACKAGE" ]]; then
-            # Swagger in same package as proto - use pb alias
-            swagger_var="pb.SwaggerJSON"
-        else
-            # Swagger in different package - import separately
-            swagger_import=$'\t'"swaggerpkg \"${SWAGGER_URL}\""
-            swagger_var="swaggerpkg.SwaggerJSON"
-        fi
+        swagger_import=$'\t_ "embed"'
+        swagger_embed='
+//go:embed api/swagger.json
+var swaggerJSON []byte
+'
         swagger_line="		// --- Swagger UI ---
-		// Swagger spec imported from: ${SWAGGER_URL}
-		// Versioned as a Go dependency alongside the proto
-		grpckit.WithSwaggerBytes(${swagger_var}),"
+		// Swagger spec fetched and embedded at build time via 'make swagger'
+		// Source: ${SWAGGER_URL}
+		// NOTE: Ensure the swagger version matches your imported proto version
+		grpckit.WithSwaggerBytes(swaggerJSON),"
     else
         swagger_line="		// --- Swagger UI ---
 		// Serves Swagger UI at /swagger/ with your OpenAPI spec
-		// To use embedded swagger from a Go package:
-		// grpckit.WithSwaggerBytes(pb.SwaggerJSON),
-		//
-		// Or from a file path:
 		// grpckit.WithSwagger(\"./swagger.json\"),"
     fi
 
@@ -776,16 +776,17 @@ generate_main_for_external_proto() {
 package main
 
 import (
-	"context"
+	// "context"
+${swagger_import}
 	"log"
 	"time"
 
 	"github.com/gyozatech/grpckit"
 	"${MODULE_PATH}/internal/service"
 	pb "${PROTO_GO_PACKAGE}"
-${swagger_import}
 	"google.golang.org/grpc"
 )
+${swagger_embed}
 
 func main() {
 	log.Println("Starting ${SERVICE_NAME} service...")
@@ -796,6 +797,7 @@ func main() {
 	// Uncomment and customize this function to enable authentication.
 	// The function receives the Bearer token and should return an enriched
 	// context with user information, or an error if authentication fails.
+	// NOTE: Uncomment "context" import above when enabling authentication.
 	//
 	// authFunc := func(ctx context.Context, token string) (context.Context, error) {
 	// 	if token == "" {
@@ -960,15 +962,20 @@ generate_main() {
 
     # Build swagger section based on whether SWAGGER_URL is provided
     local swagger_import=""
+    local swagger_embed=""
     local swagger_line
 
     if [[ -n "$SWAGGER_URL" ]]; then
-        # Swagger in a separate package - import it
-        swagger_import=$'\t'"swaggerpkg \"${SWAGGER_URL}\""
+        swagger_import=$'\t_ "embed"'
+        swagger_embed='
+//go:embed api/swagger.json
+var swaggerJSON []byte
+'
         swagger_line="		// --- Swagger UI ---
-		// Swagger spec imported from: ${SWAGGER_URL}
-		// Versioned as a Go dependency alongside the proto
-		grpckit.WithSwaggerBytes(swaggerpkg.SwaggerJSON),"
+		// Swagger spec fetched and embedded at build time via 'make swagger'
+		// Source: ${SWAGGER_URL}
+		// NOTE: Ensure the swagger version matches your imported proto version
+		grpckit.WithSwaggerBytes(swaggerJSON),"
     else
         swagger_line="		// --- Swagger UI ---
 		// Serves Swagger UI at /swagger/ with your OpenAPI spec
@@ -981,17 +988,17 @@ generate_main() {
 package main
 
 import (
-	"context"
+	// "context"
+${swagger_import}
 	"log"
 	"time"
 
 	"github.com/gyozatech/grpckit"
 	"${MODULE_PATH}/internal/service"
 	pb "${MODULE_PATH}/proto/gen"
-${swagger_import}
 	"google.golang.org/grpc"
 )
-
+${swagger_embed}
 func main() {
 	log.Println("Starting ${SERVICE_NAME} service...")
 
@@ -1001,6 +1008,7 @@ func main() {
 	// Uncomment and customize this function to enable authentication.
 	// The function receives the Bearer token and should return an enriched
 	// context with user information, or an error if authentication fails.
+	// NOTE: Uncomment "context" import above when enabling authentication.
 	//
 	// authFunc := func(ctx context.Context, token string) (context.Context, error) {
 	// 	if token == "" {
@@ -1163,12 +1171,40 @@ EOF
 generate_makefile() {
     print_info "Generating Makefile..."
 
-    cat > "${OUTPUT_DIR}/Makefile" << 'EOF'
-.PHONY: all proto build run test clean help
+    # Build swagger-related Makefile sections if SWAGGER_URL is provided
+    local swagger_phony=""
+    local swagger_var=""
+    local swagger_dep=""
+    local swagger_target=""
+    local swagger_clean=""
+    local swagger_help=""
+
+    if [[ -n "$SWAGGER_URL" ]]; then
+        swagger_phony=" swagger"
+        swagger_var="
+SWAGGER_URL := ${SWAGGER_URL}
+SWAGGER_FILE := api/swagger.json"
+        swagger_dep=" swagger"
+        swagger_target='
+# Fetch swagger spec (embedded at build time)
+swagger:
+	@echo "Fetching swagger spec..."
+	@mkdir -p api
+	@curl -fsSL "$(SWAGGER_URL)" -o $(SWAGGER_FILE) || (echo "Failed to fetch swagger. Check URL or network access." && exit 1)
+	@echo "Swagger saved to $(SWAGGER_FILE)"
+'
+        swagger_clean='
+	rm -f api/swagger.json'
+        swagger_help='
+	@echo "  swagger       - Fetch swagger spec from remote URL"'
+    fi
+
+    cat > "${OUTPUT_DIR}/Makefile" << EOF
+.PHONY: all proto build run test clean help${swagger_phony}
 
 # Variables
 BINARY_NAME := service
-PROTO_DIR := proto
+PROTO_DIR := proto${swagger_var}
 
 # Default target
 all: proto build
@@ -1176,19 +1212,19 @@ all: proto build
 # Generate protobuf code
 proto:
 	@echo "Generating protobuf code..."
-	cd $(PROTO_DIR) && buf generate
+	cd \$(PROTO_DIR) && buf generate
 	@echo "Done!"
 
 # Update buf dependencies
 proto-update:
 	@echo "Updating buf dependencies..."
-	cd $(PROTO_DIR) && buf mod update
+	cd \$(PROTO_DIR) && buf mod update
 	@echo "Done!"
-
+${swagger_target}
 # Build the service
-build:
+build:${swagger_dep}
 	@echo "Building..."
-	go build -o $(BINARY_NAME) .
+	go build -o \$(BINARY_NAME) .
 	@echo "Done!"
 
 # Run the service
@@ -1211,8 +1247,8 @@ test-coverage:
 # Clean build artifacts
 clean:
 	@echo "Cleaning..."
-	rm -f $(BINARY_NAME)
-	rm -f coverage.out coverage.html
+	rm -f \$(BINARY_NAME)
+	rm -f coverage.out coverage.html${swagger_clean}
 	@echo "Done!"
 
 # Tidy go modules
@@ -1232,7 +1268,7 @@ help:
 	@echo "Available targets:"
 	@echo "  all           - Generate proto and build (default)"
 	@echo "  proto         - Generate protobuf code"
-	@echo "  proto-update  - Update buf dependencies"
+	@echo "  proto-update  - Update buf dependencies"${swagger_help}
 	@echo "  build         - Build the service binary"
 	@echo "  run           - Run the service"
 	@echo "  test          - Run tests"
@@ -1250,7 +1286,16 @@ EOF
 generate_gitignore() {
     print_info "Generating .gitignore..."
 
-    cat > "${OUTPUT_DIR}/.gitignore" << 'EOF'
+    # Add swagger to gitignore if enabled
+    local swagger_ignore=""
+    if [[ -n "$SWAGGER_URL" ]]; then
+        swagger_ignore="
+
+# Swagger (fetched at build time)
+api/swagger.json"
+    fi
+
+    cat > "${OUTPUT_DIR}/.gitignore" << EOF
 # Binaries
 service
 *.exe
@@ -1267,7 +1312,7 @@ coverage.out
 coverage.html
 
 # Go workspace
-go.work
+go.work${swagger_ignore}
 
 # IDE
 .idea/

@@ -50,49 +50,36 @@ chmod +x create-service.sh
   --go-package=git.example.com/repo/clients/api/v1/api-go \
   --grpckit-version=v0.0.2
 
-# With custom ports and swagger from a Go package
+# With custom ports and swagger (fetched at build time)
 ./create-service.sh \
   --name=user \
   --module=github.com/myorg/user-service \
   --grpc-port=50051 \
   --http-port=8081 \
-  --swagger=git.example.com/org/api/swagger
+  --swagger=https://git.example.com/org/api/-/raw/main/swagger.json
 ```
 
-### Swagger as a Go Dependency
+### Swagger Embedding
 
-When `--swagger` is specified, it should be the **Go import path** of a package that exports `SwaggerJSON []byte`. This allows the swagger spec to be:
-- Versioned alongside the proto (same module, same version)
-- Imported as a normal Go dependency
-- Updated automatically when you bump the module version in `go.mod`
+When `--swagger` is specified with a URL:
+1. The Makefile gets a `swagger` target that downloads the spec via `curl`
+2. The spec is saved to `api/swagger.json` (gitignored - fetched fresh each build)
+3. The file is embedded into the binary using Go's `//go:embed` directive
+4. At runtime, the swagger is served from memory (no file access needed)
 
-The proto repository should have a package that embeds and exports the swagger:
+This allows the swagger spec to be:
+- Fetched from protected URLs (authenticated via your local environment at build time)
+- Always fresh from the source repository
+- Embedded in the binary (no external files needed at runtime)
 
-```go
-// In git.example.com/org/api/swagger/swagger.go
-package swagger
-
-import _ "embed"
-
-//go:embed swagger.json
-var SwaggerJSON []byte
-```
-
-Then your service imports it like any other dependency:
-
-```go
-import swaggerpkg "git.example.com/org/api/swagger"
-
-grpckit.WithSwaggerBytes(swaggerpkg.SwaggerJSON)
-```
-
-If the swagger is in the **same package** as the proto's generated code, you can use the same import path as `--go-package`:
+**Note:** Ensure the swagger spec version matches your imported proto version. If your swagger URL contains a branch name (e.g., `main`), update it to a specific version tag that corresponds to the proto module version in your `go.sum`.
 
 ```bash
-./create-service.sh \
-  --proto=https://git.example.com/org/api/service.proto \
-  --go-package=git.example.com/org/api/gen \
-  --swagger=git.example.com/org/api/gen  # Same package - uses pb.SwaggerJSON
+# Build fetches swagger automatically (it's a dependency of build)
+make build
+
+# Or fetch swagger explicitly
+make swagger
 ```
 
 ### Script Arguments
@@ -107,7 +94,7 @@ All arguments support both `--arg value` and `--arg=value` formats.
 | `--proto, -p` | No | URL or path to an existing proto file to use |
 | `--go-package` | No | Go import path for the proto's generated code. Required if proto doesn't have `go_package` option |
 | `--grpckit-version` | No | grpckit version (e.g., "v0.0.2"). If not specified, uses placeholder for `go mod tidy` |
-| `--swagger` | No | Go import path of package exporting `SwaggerJSON []byte` (versioned with proto) |
+| `--swagger` | No | URL to swagger JSON file, fetched at build time and embedded into binary |
 | `--grpc-port` | No | gRPC port (default: 9090) |
 | `--http-port` | No | HTTP port (default: 8080) |
 
