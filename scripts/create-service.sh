@@ -749,25 +749,18 @@ generate_main_for_external_proto() {
     local actual_service_name="${PROTO_SERVICE_NAME:-${service_pascal}Service}"
 
     # Build swagger section based on whether SWAGGER_URL is provided
-    local swagger_import=""
-    local swagger_embed=""
     local swagger_line
 
     if [[ -n "$SWAGGER_URL" ]]; then
-        swagger_import=$'\t_ "embed"'
-        swagger_embed='
-//go:embed api/swagger.json
-var swaggerJSON []byte
-'
         swagger_line="		// --- Swagger UI ---
 		// Swagger spec fetched and embedded at build time via 'make swagger'
 		// Source: ${SWAGGER_URL}
 		// NOTE: Ensure the swagger version matches your imported proto version
-		grpckit.WithSwaggerBytes(swaggerJSON),"
+		grpckit.WithSwagger(\"${SWAGGER_URL}\"),"
     else
         swagger_line="		// --- Swagger UI ---
 		// Serves Swagger UI at /swagger/ with your OpenAPI spec
-		// grpckit.WithSwagger(\"./swagger.json\"),"
+		// grpckit.WithSwagger(\"https://example.com/swagger.json\"),"
     fi
 
     print_info "Generating main.go for ${actual_service_name}..."
@@ -777,7 +770,6 @@ package main
 
 import (
 	// "context"
-${swagger_import}
 	"log"
 	"time"
 
@@ -786,7 +778,7 @@ ${swagger_import}
 	pb "${PROTO_GO_PACKAGE}"
 	"google.golang.org/grpc"
 )
-${swagger_embed}
+
 
 func main() {
 	log.Println("Starting ${SERVICE_NAME} service...")
@@ -961,25 +953,18 @@ generate_main() {
     local service_pascal=$(to_pascal_case "$SERVICE_NAME")
 
     # Build swagger section based on whether SWAGGER_URL is provided
-    local swagger_import=""
-    local swagger_embed=""
     local swagger_line
 
     if [[ -n "$SWAGGER_URL" ]]; then
-        swagger_import=$'\t_ "embed"'
-        swagger_embed='
-//go:embed api/swagger.json
-var swaggerJSON []byte
-'
         swagger_line="		// --- Swagger UI ---
 		// Swagger spec fetched and embedded at build time via 'make swagger'
 		// Source: ${SWAGGER_URL}
 		// NOTE: Ensure the swagger version matches your imported proto version
-		grpckit.WithSwaggerBytes(swaggerJSON),"
+		grpckit.WithSwagger(\"${SWAGGER_URL}\"),"
     else
         swagger_line="		// --- Swagger UI ---
 		// Serves Swagger UI at /swagger/ with your OpenAPI spec
-		// grpckit.WithSwagger(\"./proto/gen/swagger.json\"),"
+		// grpckit.WithSwagger(\"https://example.com/swagger.json\"),"
     fi
 
     print_info "Generating main.go..."
@@ -989,7 +974,6 @@ package main
 
 import (
 	// "context"
-${swagger_import}
 	"log"
 	"time"
 
@@ -998,7 +982,7 @@ ${swagger_import}
 	pb "${MODULE_PATH}/proto/gen"
 	"google.golang.org/grpc"
 )
-${swagger_embed}
+
 func main() {
 	log.Println("Starting ${SERVICE_NAME} service...")
 
@@ -1186,17 +1170,29 @@ SWAGGER_URL := ${SWAGGER_URL}
 SWAGGER_FILE := api/swagger.json"
         swagger_dep=" swagger"
         swagger_target='
-# Fetch swagger spec (embedded at build time)
+# Fetch swagger spec and generate embedding code
 swagger:
 	@echo "Fetching swagger spec..."
 	@mkdir -p api
 	@curl -fsSL "$(SWAGGER_URL)" -o $(SWAGGER_FILE) || (echo "Failed to fetch swagger. Check URL or network access." && exit 1)
-	@echo "Swagger saved to $(SWAGGER_FILE)"
+	@echo "Generating swagger_gen.go..."
+	@echo "package main" > swagger_gen.go
+	@echo "" >> swagger_gen.go
+	@echo "import (" >> swagger_gen.go
+	@echo "	_ \"embed\"" >> swagger_gen.go
+	@echo "	\"github.com/gyozatech/grpckit\"" >> swagger_gen.go
+	@echo ")" >> swagger_gen.go
+	@echo "" >> swagger_gen.go
+	@echo "//go:embed api/swagger.json" >> swagger_gen.go
+	@echo "var _swaggerData []byte" >> swagger_gen.go
+	@echo "" >> swagger_gen.go
+	@echo "func init() { grpckit.SetSwaggerData(_swaggerData) }" >> swagger_gen.go
+	@echo "Done! Swagger will be embedded at build time."
 '
         swagger_clean='
-	rm -f api/swagger.json'
+	rm -f api/swagger.json swagger_gen.go'
         swagger_help='
-	@echo "  swagger       - Fetch swagger spec from remote URL"'
+	@echo "  swagger       - Fetch swagger spec and generate embedding code"'
     fi
 
     cat > "${OUTPUT_DIR}/Makefile" << EOF
@@ -1291,8 +1287,9 @@ generate_gitignore() {
     if [[ -n "$SWAGGER_URL" ]]; then
         swagger_ignore="
 
-# Swagger (fetched at build time)
-api/swagger.json"
+# Swagger (generated at build time via 'make swagger')
+api/swagger.json
+swagger_gen.go"
     fi
 
     cat > "${OUTPUT_DIR}/.gitignore" << EOF

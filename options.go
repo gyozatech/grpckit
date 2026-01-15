@@ -84,6 +84,16 @@ type JSONOptions struct {
 	DiscardUnknown bool
 }
 
+// globalSwaggerData is set by generated init() code from swagger_gen.go.
+// This allows the swagger data to be embedded without user-visible //go:embed.
+var globalSwaggerData []byte
+
+// SetSwaggerData is called by the generated swagger_gen.go init() function.
+// Users should not call this directly.
+func SetSwaggerData(data []byte) {
+	globalSwaggerData = data
+}
+
 // serverConfig holds all configuration for the server.
 type serverConfig struct {
 	// Ports
@@ -102,8 +112,8 @@ type serverConfig struct {
 	// Features
 	healthEnabled  bool
 	metricsEnabled bool
-	swaggerPath    string
-	swaggerData    []byte
+	swaggerURL     string // URL for documentation (fetched at build time)
+	swaggerPath    string // Local file path (read at runtime)
 	swaggerEnabled bool
 	corsEnabled    bool
 	corsConfig     *CORSConfig
@@ -290,30 +300,37 @@ func WithCORSConfig(cfg CORSConfig) Option {
 	}
 }
 
-// WithSwagger enables the Swagger UI and serves the OpenAPI spec.
-// The path should point to your swagger.json file.
+// WithSwagger enables Swagger UI with a URL-based swagger spec.
+// The URL is fetched at build time via 'make swagger' and embedded into the binary.
+// At runtime, the swagger is served from memory.
+//
+// To use this:
+//  1. Pass the URL to your swagger.json file
+//  2. Run 'make swagger' before 'go build' (or just 'make build')
+//  3. The Makefile fetches the URL and generates swagger_gen.go
+//
+// If 'make swagger' wasn't run, /swagger/ returns 404 with a helpful message.
 //
 // Example:
 //
-//	grpckit.WithSwagger("./api/swagger.json")
-func WithSwagger(swaggerJSONPath string) Option {
+//	grpckit.WithSwagger("https://git.example.com/org/api/-/raw/v1.0.0/swagger.json")
+func WithSwagger(url string) Option {
 	return func(c *serverConfig) {
 		c.swaggerEnabled = true
-		c.swaggerPath = swaggerJSONPath
+		c.swaggerURL = url
 	}
 }
 
-// WithSwaggerBytes enables the Swagger UI using embedded swagger data.
-// This allows importing swagger as a Go dependency, versioned alongside protos.
+// WithSwaggerFile enables Swagger UI from a local file (read at runtime).
+// Use this if you don't need build-time embedding and the file is available at runtime.
 //
 // Example:
 //
-//	import swaggerpkg "git.example.com/org/api/swagger"
-//	grpckit.WithSwaggerBytes(swaggerpkg.SwaggerJSON)
-func WithSwaggerBytes(data []byte) Option {
+//	grpckit.WithSwaggerFile("./api/swagger.json")
+func WithSwaggerFile(path string) Option {
 	return func(c *serverConfig) {
 		c.swaggerEnabled = true
-		c.swaggerData = data
+		c.swaggerPath = path
 	}
 }
 

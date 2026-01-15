@@ -62,17 +62,21 @@ chmod +x create-service.sh
 ### Swagger Embedding
 
 When `--swagger` is specified with a URL:
-1. The Makefile gets a `swagger` target that downloads the spec via `curl`
-2. The spec is saved to `api/swagger.json` (gitignored - fetched fresh each build)
-3. The file is embedded into the binary using Go's `//go:embed` directive
-4. At runtime, the swagger is served from memory (no file access needed)
+1. Your `main.go` simply uses `grpckit.WithSwagger("https://...")` - clean, no boilerplate
+2. The Makefile `swagger` target fetches the spec and generates `swagger_gen.go`
+3. `swagger_gen.go` handles the embedding (gitignored - you never see or edit it)
+4. At runtime, the swagger is served from memory
 
-This allows the swagger spec to be:
-- Fetched from protected URLs (authenticated via your local environment at build time)
-- Always fresh from the source repository
-- Embedded in the binary (no external files needed at runtime)
+Your code stays clean:
+```go
+grpckit.WithSwagger("https://git.example.com/api/-/raw/v1.0.0/swagger.json")
+```
+
+The embedding magic is hidden in `swagger_gen.go` (auto-generated, gitignored).
 
 **Note:** Ensure the swagger spec version matches your imported proto version. If your swagger URL contains a branch name (e.g., `main`), update it to a specific version tag that corresponds to the proto module version in your `go.sum`.
+
+**Note:** If you forget to run `make swagger`, the server still starts but `/swagger/` returns 404 with a helpful message.
 
 ```bash
 # Build fetches swagger automatically (it's a dependency of build)
@@ -253,7 +257,8 @@ grpckit.Run(
     // Features
     grpckit.WithHealthCheck(),
     grpckit.WithMetrics(),
-    grpckit.WithSwagger("./api/swagger.json"),
+    grpckit.WithSwagger("https://example.com/api/swagger.json"), // embedded at build time via 'make swagger'
+    // Or use WithSwaggerFile("./api/swagger.json") to read from disk at runtime
 
     // Graceful shutdown
     grpckit.WithGracefulShutdown(30 * time.Second),
@@ -664,8 +669,8 @@ Endpoints should be in the format `/package.Service/Method`.
 | `/healthz` | Liveness probe (always returns 200 if running) | `WithHealthCheck()` |
 | `/readyz` | Readiness probe (returns 503 if not ready) | `WithHealthCheck()` |
 | `/metrics` | Prometheus metrics | `WithMetrics()` |
-| `/swagger/` | Swagger UI | `WithSwagger(path)` |
-| `/swagger/spec.json` | OpenAPI spec | `WithSwagger(path)` |
+| `/swagger/` | Swagger UI | `WithSwagger(url)` or `WithSwaggerFile(path)` |
+| `/swagger/spec.json` | OpenAPI spec | `WithSwagger(url)` or `WithSwaggerFile(path)` |
 
 ## Errors
 

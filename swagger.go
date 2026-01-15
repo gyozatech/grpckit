@@ -1,7 +1,6 @@
 package grpckit
 
 import (
-	"embed"
 	"encoding/json"
 	"html/template"
 	"net/http"
@@ -45,7 +44,6 @@ const swaggerUIHTML = `<!DOCTYPE html>
 type swaggerHandler struct {
 	specPath string
 	specData []byte
-	fs       embed.FS
 }
 
 // newSwaggerHandler creates a new Swagger handler from a file path.
@@ -143,5 +141,13 @@ func registerSwaggerHandler(mux *http.ServeMux, handler *swaggerHandler) {
 			return
 		}
 		http.NotFound(w, r)
+	})
+}
+
+// registerSwaggerNotFound registers a 404 handler for swagger endpoints.
+// This is used when swagger is enabled but no data was loaded (make swagger wasn't run).
+func registerSwaggerNotFound(mux *http.ServeMux) {
+	mux.HandleFunc("/swagger/", func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "swagger not available - run 'make swagger' to enable", http.StatusNotFound)
 	})
 }
