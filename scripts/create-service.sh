@@ -1174,7 +1174,22 @@ SWAGGER_FILE := api/swagger.json"
 swagger:
 	@echo "Fetching swagger spec..."
 	@mkdir -p api
-	@curl -fsSL "$(SWAGGER_URL)" -o $(SWAGGER_FILE) || (echo "Failed to fetch swagger. Check URL or network access." && exit 1)
+	@SWAGGER_URL="$(SWAGGER_URL)"; \
+		SWAGGER_HOST=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://([^/]+).*|\1|'"'"'); \
+		GITLAB_TOKEN=$$(glab config get token --host "$$SWAGGER_HOST" 2>/dev/null); \
+		if [ -n "$$GITLAB_TOKEN" ] && echo "$$SWAGGER_URL" | grep -q '"'"'/-/raw/'"'"'; then \
+			echo "Using glab token for $$SWAGGER_HOST (converting to API URL)"; \
+			PROJECT=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/([^/]+/[^/]+)/-/raw/.*|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+			BRANCH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/([^/]+)/.*|\1|'"'"'); \
+			FILEPATH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/[^/]+/(.*)|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+			API_URL="https://$$SWAGGER_HOST/api/v4/projects/$$PROJECT/repository/files/$$FILEPATH/raw?ref=$$BRANCH"; \
+			curl -fsSL -H "PRIVATE-TOKEN: $$GITLAB_TOKEN" "$$API_URL" -o $(SWAGGER_FILE); \
+		elif [ -n "$$GITLAB_TOKEN" ]; then \
+			echo "Using glab token for $$SWAGGER_HOST"; \
+			curl -fsSL -H "PRIVATE-TOKEN: $$GITLAB_TOKEN" "$$SWAGGER_URL" -o $(SWAGGER_FILE); \
+		else \
+			curl -fsSL "$$SWAGGER_URL" -o $(SWAGGER_FILE); \
+		fi || (echo "Failed to fetch swagger. Check URL, network access, or run: glab auth login --hostname <host>" && exit 1)
 	@echo "Generating swagger_gen.go..."
 	@echo "package main" > swagger_gen.go
 	@echo "" >> swagger_gen.go
