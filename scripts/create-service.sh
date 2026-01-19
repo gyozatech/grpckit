@@ -1282,11 +1282,14 @@ swagger:
     fi
 
     cat > "${OUTPUT_DIR}/Makefile" << EOF
-.PHONY: all proto build run test clean help${swagger_phony}
+.PHONY: all proto build run test clean help image-build-local image-build image-run${swagger_phony}
 
 # Variables
 BINARY_NAME := service
-PROTO_DIR := proto${swagger_var}
+PROTO_DIR := proto
+VERSION ?= dev
+DOCKER_IMAGE := ${SERVICE_NAME}-service
+PLATFORMS ?= linux/amd64,linux/arm64${swagger_var}
 
 # Default target
 all: proto build
@@ -1345,6 +1348,41 @@ deps:
 	go mod download
 	@echo "Done!"
 
+# =============================================================================
+# Docker targets
+# =============================================================================
+
+# Build Docker image for current platform (fast, for local testing)
+image-build-local:
+	@echo "Building Docker image for local platform..."
+	docker build \
+		--build-arg VERSION=\$(VERSION) \
+		-t \$(DOCKER_IMAGE):\$(VERSION) \
+		-t \$(DOCKER_IMAGE):latest \
+		.
+	@echo "Built: \$(DOCKER_IMAGE):\$(VERSION)"
+
+# Build multi-platform images in parallel and push to registry
+# Requires: docker buildx, authenticated registry
+image-build:
+	@echo "Building multi-platform Docker images..."
+	docker buildx build \
+		--platform \$(PLATFORMS) \
+		--build-arg VERSION=\$(VERSION) \
+		-t \$(DOCKER_IMAGE):\$(VERSION) \
+		-t \$(DOCKER_IMAGE):latest \
+		--push \
+		.
+	@echo "Built and pushed: \$(DOCKER_IMAGE):\$(VERSION) for \$(PLATFORMS)"
+
+# Run Docker container locally
+image-run: image-build-local
+	@echo "Running Docker container..."
+	docker run --rm \
+		-p ${HTTP_PORT}:${HTTP_PORT} \
+		-p ${GRPC_PORT}:${GRPC_PORT} \
+		\$(DOCKER_IMAGE):\$(VERSION)
+
 # Show help
 help:
 	@echo "Available targets:"
@@ -1358,6 +1396,12 @@ help:
 	@echo "  clean         - Remove build artifacts"
 	@echo "  tidy          - Tidy go modules"
 	@echo "  deps          - Download dependencies"
+	@echo ""
+	@echo "Docker targets:"
+	@echo "  image-build-local - Build Docker image for current platform"
+	@echo "  image-build       - Build multi-platform images and push to registry"
+	@echo "  image-run         - Build and run container locally"
+	@echo ""
 	@echo "  help          - Show this help"
 EOF
 
@@ -1543,6 +1587,84 @@ EOF
     print_success "README.md generated"
 }
 
+# Generate Dockerfile
+generate_dockerfile() {
+    print_info "Generating Dockerfile..."
+
+    cat > "${OUTPUT_DIR}/Dockerfile" << 'EOF'
+# =============================================================================
+# Multi-stage Dockerfile for gRPC+REST microservice
+# Security: non-root user, minimal distroless image, no shell
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Stage 1: Builder
+# -----------------------------------------------------------------------------
+FROM golang:1.22-alpine AS builder
+
+WORKDIR /src
+
+# Install minimal build dependencies
+RUN apk add --no-cache git ca-certificates tzdata
+
+# Copy dependency files first (better layer caching)
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build static binary
+# - CGO_ENABLED=0: Pure Go, no C dependencies
+# - -ldflags="-s -w": Strip debug symbols for smaller binary
+# - -installsuffix cgo: Use separate package cache
+ARG VERSION=dev
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+    -a \
+    -installsuffix cgo \
+    -ldflags="-s -w -X main.Version=${VERSION}" \
+    -o /service .
+
+# -----------------------------------------------------------------------------
+# Stage 2: Runtime (distroless)
+# -----------------------------------------------------------------------------
+# Using distroless for maximum security:
+# - No shell, no package manager, no unnecessary binaries
+# - Includes CA certificates for TLS/HTTPS/gRPC
+# - Pre-configured non-root user (UID 65532)
+FROM gcr.io/distroless/base-debian12:nonroot
+
+# Copy binary from builder
+COPY --from=builder --chown=65532:65532 /service /service
+
+# Copy timezone data for proper time handling
+COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
+
+# Run as non-root user (distroless nonroot = 65532)
+USER 65532:65532
+
+# Expose service ports
+EXPOSE 9090 8080
+
+# Health check disabled in Dockerfile (use orchestrator probes instead)
+# Kubernetes: livenessProbe/readinessProbe on /healthz and /readyz
+# Docker Compose: healthcheck in compose.yaml
+
+ENTRYPOINT ["/service"]
+EOF
+
+    # Substitute the actual ports
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "s/EXPOSE 9090 8080/EXPOSE ${GRPC_PORT} ${HTTP_PORT}/" "${OUTPUT_DIR}/Dockerfile"
+    else
+        sed -i "s/EXPOSE 9090 8080/EXPOSE ${GRPC_PORT} ${HTTP_PORT}/" "${OUTPUT_DIR}/Dockerfile"
+    fi
+
+    print_success "Dockerfile generated"
+}
+
 # Print next steps
 print_next_steps() {
     echo ""
@@ -1638,6 +1760,7 @@ main() {
     generate_makefile
     generate_gitignore
     generate_readme
+    generate_dockerfile
 
     print_next_steps
 }
