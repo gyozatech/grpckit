@@ -1,9 +1,10 @@
 # gRPCkit
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org)
-[![Open Source Love 
-svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![CI](https://github.com/gyozatech/grpckit/actions/workflows/ci.yml/badge.svg)](https://github.com/gyozatech/grpckit/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/gyozatech/grpckit/graph/badge.svg)](https://codecov.io/gh/gyozatech/grpckit)
+[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 ![logo](assets/logo.jpg?raw=true)
 
