@@ -1228,9 +1228,9 @@ swagger:
 				if [ -n "$$TOKEN" ]; then \
 					AUTH_HEADER="PRIVATE-TOKEN: $$TOKEN"; \
 					if echo "$$SWAGGER_URL" | grep -q '"'"'/-/raw/'"'"'; then \
-						PROJECT=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/([^/]+/[^/]+)/-/raw/.*|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
-						BRANCH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/([^/]+)/.*|\1|'"'"'); \
-						FILEPATH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/[^/]+/[^/]+/-/raw/[^/]+/(.*)|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+						PROJECT=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/(.*)/-/raw/.*|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
+						BRANCH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/.*/-/raw/([^/]+)/.*|\1|'"'"'); \
+						FILEPATH=$$(echo "$$SWAGGER_URL" | sed -E '"'"'s|https?://[^/]+/.*/-/raw/[^/]+/(.*)|\1|'"'"' | sed '"'"'s|/|%2F|g'"'"'); \
 						FETCH_URL="https://$$HOST/api/v4/projects/$$PROJECT/repository/files/$$FILEPATH/raw?ref=$$BRANCH"; \
 					fi; \
 				fi; \
