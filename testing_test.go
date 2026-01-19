@@ -265,7 +265,7 @@ func TestTestServer_CustomHTTPHandler(t *testing.T) {
 		WithGRPCService(func(s grpc.ServiceRegistrar) {}),
 		WithHTTPHandlerFunc("/custom", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"custom": true}`))
+			_, _ = w.Write([]byte(`{"custom": true}`))
 		}),
 	)
 	if err != nil {

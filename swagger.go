@@ -102,7 +102,7 @@ func (s *swaggerHandler) UIHandler() http.HandlerFunc {
 func (s *swaggerHandler) SpecHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(s.specData)
+		_, _ = w.Write(s.specData)
 	}
 }
 

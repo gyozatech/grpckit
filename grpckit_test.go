@@ -111,7 +111,7 @@ func TestNew_WithAuth(t *testing.T) {
 	}
 
 	// Call auth function to verify it was stored correctly
-	server.cfg.authFunc(context.Background(), "token")
+	_, _ = server.cfg.authFunc(context.Background(), "token")
 	if !authCalled {
 		t.Error("expected auth function to be callable")
 	}

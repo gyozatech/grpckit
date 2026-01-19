@@ -112,7 +112,7 @@ func TestCORSMiddleware_PreflightRequest(t *testing.T) {
 
 	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("should not reach here"))
+		_, _ = w.Write([]byte("should not reach here"))
 	}))
 
 	req := httptest.NewRequest(http.MethodOptions, "/test", nil)

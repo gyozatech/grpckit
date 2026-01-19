@@ -91,7 +91,7 @@ func TestWithRESTService(t *testing.T) {
 	}
 
 	// Call the registrar to verify
-	cfg.restServices[0](context.Background(), nil, "", nil)
+	_ = cfg.restServices[0](context.Background(), nil, "", nil)
 	if !registrarCalled {
 		t.Error("expected REST registrar to be called")
 	}
@@ -111,7 +111,7 @@ func TestWithAuth(t *testing.T) {
 		t.Error("expected authFunc to be set")
 	}
 
-	cfg.authFunc(context.Background(), "token")
+	_, _ = cfg.authFunc(context.Background(), "token")
 	if !authCalled {
 		t.Error("expected auth function to be called")
 	}

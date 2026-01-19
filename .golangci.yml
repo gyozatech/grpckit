@@ -1,0 +1,17 @@
+run:
+  timeout: 5m
+  skip-dirs:
+    - example/proto/gen
+
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+issues:
+  exclude-dirs:
+    - example/proto/gen

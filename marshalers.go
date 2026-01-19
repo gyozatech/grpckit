@@ -494,7 +494,7 @@ func (d *multipartDecoder) Decode(v interface{}) error {
 	if err != nil {
 		return fmt.Errorf("multipart decoder: failed to parse form: %w", err)
 	}
-	defer form.RemoveAll()
+	defer func() { _ = form.RemoveAll() }()
 
 	return populateFromMultipart(form, v)
 }
