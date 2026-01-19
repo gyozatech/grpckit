@@ -264,7 +264,7 @@ func TestAuthMiddleware_AuthSuccess(t *testing.T) {
 			if token != "valid-token" {
 				return nil, ErrUnauthorized
 			}
-			return context.WithValue(ctx, "user_id", "user123"), nil
+			return context.WithValue(ctx, UserIDKey, "user123"), nil
 		},
 	}
 
@@ -285,7 +285,7 @@ func TestAuthMiddleware_AuthSuccess(t *testing.T) {
 		t.Errorf("expected status 200, got %d", rec.Code)
 	}
 
-	if capturedCtx.Value("user_id") != "user123" {
+	if capturedCtx.Value(UserIDKey) != "user123" {
 		t.Error("expected enriched context with user_id")
 	}
 }
@@ -396,7 +396,7 @@ func TestGRPCAuthInterceptor_AuthSuccess(t *testing.T) {
 			if token != "valid-token" {
 				return nil, ErrUnauthorized
 			}
-			return context.WithValue(ctx, "user_id", "user123"), nil
+			return context.WithValue(ctx, UserIDKey, "user123"), nil
 		},
 	}
 	interceptor := grpcAuthInterceptor(cfg)
@@ -416,7 +416,7 @@ func TestGRPCAuthInterceptor_AuthSuccess(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 
-	if capturedCtx.Value("user_id") != "user123" {
+	if capturedCtx.Value(UserIDKey) != "user123" {
 		t.Error("expected enriched context with user_id")
 	}
 }
