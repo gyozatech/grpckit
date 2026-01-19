@@ -362,7 +362,7 @@ generate_go_mod() {
     cat > "${OUTPUT_DIR}/go.mod" << EOF
 module ${MODULE_PATH}
 
-go 1.22
+go 1.24
 
 require (
 	github.com/gyozatech/grpckit ${grpckit_version}
@@ -1600,7 +1600,7 @@ generate_dockerfile() {
 # -----------------------------------------------------------------------------
 # Stage 1: Builder
 # -----------------------------------------------------------------------------
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /src
 
