@@ -13,11 +13,23 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
+
+// titleCase capitalizes the first letter of a string.
+// This is a simple replacement for the deprecated strings.Title.
+func titleCase(s string) string {
+	if s == "" {
+		return s
+	}
+	r := []rune(s)
+	r[0] = unicode.ToUpper(r[0])
+	return string(r)
+}
 
 // buildMarshalerOptions converts the marshaler configuration to ServeMuxOptions.
 func buildMarshalerOptions(cfg *serverConfig) []runtime.ServeMuxOption {
@@ -809,7 +821,7 @@ func (t *TextMarshaler) Marshal(v interface{}) ([]byte, error) {
 			outputField = "text"
 		}
 
-		if field := rv.FieldByName(strings.Title(outputField)); field.IsValid() && field.Kind() == reflect.String {
+		if field := rv.FieldByName(titleCase(outputField)); field.IsValid() && field.Kind() == reflect.String {
 			return []byte(field.String()), nil
 		}
 
@@ -837,7 +849,7 @@ func (t *TextMarshaler) Unmarshal(data []byte, v interface{}) error {
 			inputField = "text"
 		}
 
-		if field := rv.FieldByName(strings.Title(inputField)); field.IsValid() && field.CanSet() && field.Kind() == reflect.String {
+		if field := rv.FieldByName(titleCase(inputField)); field.IsValid() && field.CanSet() && field.Kind() == reflect.String {
 			field.SetString(string(data))
 			return nil
 		}

@@ -71,5 +71,7 @@ func AuthFunc(ctx context.Context, token string) (context.Context, error) {
 		return nil, grpckit.ErrUnauthorized
 	}
 	// In a real app, validate the token and extract user info
-	return context.WithValue(ctx, "user_id", "user-123"), nil
+	// Note: In production, use a custom type for context keys to avoid collisions
+	type contextKey string
+	return context.WithValue(ctx, contextKey("user_id"), "user-123"), nil
 }

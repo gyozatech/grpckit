@@ -58,5 +58,5 @@ func webhookHandler(w http.ResponseWriter, r *http.Request) {
 	// Respond with any format - not constrained by proto
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status": "received", "message": "Webhook processed successfully"}`))
+	_, _ = w.Write([]byte(`{"status": "received", "message": "Webhook processed successfully"}`))
 }

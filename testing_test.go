@@ -10,14 +10,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-// mockService is a simple mock gRPC service for testing.
-type mockService struct{}
-
-func (m *mockService) registerGRPC(s grpc.ServiceRegistrar) {
-	// In real tests, you would register your actual service here:
-	// pb.RegisterMyServiceServer(s, m)
-}
-
 func TestNewTestServer(t *testing.T) {
 	// Create a test server with health checks enabled
 	ts, err := NewTestServer(
@@ -181,8 +173,8 @@ func TestMockAuthFunc(t *testing.T) {
 	if err != nil {
 		t.Errorf("MockAuthFunc with valid token error = %v", err)
 	}
-	if ctx.Value("user_id") != "user-123" {
-		t.Errorf("MockAuthFunc user_id = %v, want user-123", ctx.Value("user_id"))
+	if ctx.Value(UserIDKey) != "user-123" {
+		t.Errorf("MockAuthFunc user_id = %v, want user-123", ctx.Value(UserIDKey))
 	}
 
 	// Test invalid token
@@ -203,8 +195,8 @@ func TestMockAuthFuncMultiple(t *testing.T) {
 	if err != nil {
 		t.Errorf("MockAuthFuncMultiple with admin token error = %v", err)
 	}
-	if ctx.Value("user_id") != "admin-user" {
-		t.Errorf("MockAuthFuncMultiple user_id = %v, want admin-user", ctx.Value("user_id"))
+	if ctx.Value(UserIDKey) != "admin-user" {
+		t.Errorf("MockAuthFuncMultiple user_id = %v, want admin-user", ctx.Value(UserIDKey))
 	}
 
 	// Test user token
@@ -212,8 +204,8 @@ func TestMockAuthFuncMultiple(t *testing.T) {
 	if err != nil {
 		t.Errorf("MockAuthFuncMultiple with user token error = %v", err)
 	}
-	if ctx.Value("user_id") != "regular-user" {
-		t.Errorf("MockAuthFuncMultiple user_id = %v, want regular-user", ctx.Value("user_id"))
+	if ctx.Value(UserIDKey) != "regular-user" {
+		t.Errorf("MockAuthFuncMultiple user_id = %v, want regular-user", ctx.Value(UserIDKey))
 	}
 
 	// Test invalid token
@@ -231,12 +223,12 @@ func TestMockAuthFuncAllowAll(t *testing.T) {
 	if err != nil {
 		t.Errorf("MockAuthFuncAllowAll error = %v", err)
 	}
-	if ctx.Value("user_id") != "test-user" {
-		t.Errorf("MockAuthFuncAllowAll user_id = %v, want test-user", ctx.Value("user_id"))
+	if ctx.Value(UserIDKey) != "test-user" {
+		t.Errorf("MockAuthFuncAllowAll user_id = %v, want test-user", ctx.Value(UserIDKey))
 	}
 
 	// Empty token should also work
-	ctx, err = authFunc(context.Background(), "")
+	_, err = authFunc(context.Background(), "")
 	if err != nil {
 		t.Errorf("MockAuthFuncAllowAll with empty token error = %v", err)
 	}

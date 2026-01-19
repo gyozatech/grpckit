@@ -17,6 +17,12 @@ import (
 
 const bufSize = 1024 * 1024
 
+// ContextKey is a custom type for context keys to avoid collisions.
+type ContextKey string
+
+// UserIDKey is the context key used for storing user IDs in mock auth functions.
+const UserIDKey ContextKey = "user_id"
+
 // TestServer provides an in-memory server for testing gRPC and REST endpoints
 // without requiring actual network ports.
 //
@@ -242,7 +248,7 @@ func MockAuthFunc(validToken, userID string) AuthFunc {
 		if token != validToken {
 			return nil, ErrUnauthorized
 		}
-		return context.WithValue(ctx, "user_id", userID), nil
+		return context.WithValue(ctx, UserIDKey, userID), nil
 	}
 }
 
@@ -264,7 +270,7 @@ func MockAuthFuncMultiple(tokenToUserID map[string]string) AuthFunc {
 		if !ok {
 			return nil, ErrUnauthorized
 		}
-		return context.WithValue(ctx, "user_id", userID), nil
+		return context.WithValue(ctx, UserIDKey, userID), nil
 	}
 }
 
@@ -272,7 +278,7 @@ func MockAuthFuncMultiple(tokenToUserID map[string]string) AuthFunc {
 // Useful for tests that don't care about authentication.
 func MockAuthFuncAllowAll() AuthFunc {
 	return func(ctx context.Context, token string) (context.Context, error) {
-		return context.WithValue(ctx, "user_id", "test-user"), nil
+		return context.WithValue(ctx, UserIDKey, "test-user"), nil
 	}
 }
 
