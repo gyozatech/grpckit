@@ -230,8 +230,8 @@ func (s *Server) startHTTP(ctx context.Context) error {
 
 	// Register swagger endpoints
 	if s.cfg.swaggerEnabled {
-		if len(globalSwaggerData) > 0 {
-			if err := registerSwaggerEndpointsFromBytes(mux, globalSwaggerData); err != nil {
+		if swaggerData := getSwaggerData(); len(swaggerData) > 0 {
+			if err := registerSwaggerEndpointsFromBytes(mux, swaggerData); err != nil {
 				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
 			}
 		} else if s.cfg.swaggerPath != "" {
@@ -321,8 +321,8 @@ func (s *Server) startCombined(ctx context.Context) error {
 
 	// Register swagger endpoints
 	if s.cfg.swaggerEnabled {
-		if len(globalSwaggerData) > 0 {
-			if err := registerSwaggerEndpointsFromBytes(mux, globalSwaggerData); err != nil {
+		if swaggerData := getSwaggerData(); len(swaggerData) > 0 {
+			if err := registerSwaggerEndpointsFromBytes(mux, swaggerData); err != nil {
 				log.Printf("Warning: failed to register Swagger endpoints: %v", err)
 			}
 		} else if s.cfg.swaggerPath != "" {
@@ -435,30 +435,42 @@ func (s *Server) HTTPServer() *http.Server {
 }
 
 // wrapUnaryInterceptor wraps an interceptor with endpoint exclusion logic.
+// Uses a pre-built map for O(1) endpoint lookup.
 func wrapUnaryInterceptor(reg unaryInterceptorRegistration) grpc.UnaryServerInterceptor {
 	if len(reg.exceptEndpoints) == 0 {
 		return reg.interceptor
 	}
+
+	// Build map for O(1) lookups
+	exceptMap := make(map[string]bool, len(reg.exceptEndpoints))
+	for _, ep := range reg.exceptEndpoints {
+		exceptMap[ep] = true
+	}
+
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		for _, endpoint := range reg.exceptEndpoints {
-			if info.FullMethod == endpoint {
-				return handler(ctx, req) // Skip interceptor
-			}
+		if exceptMap[info.FullMethod] {
+			return handler(ctx, req) // Skip interceptor
 		}
 		return reg.interceptor(ctx, req, info, handler)
 	}
 }
 
 // wrapStreamInterceptor wraps a stream interceptor with endpoint exclusion logic.
+// Uses a pre-built map for O(1) endpoint lookup.
 func wrapStreamInterceptor(reg streamInterceptorRegistration) grpc.StreamServerInterceptor {
 	if len(reg.exceptEndpoints) == 0 {
 		return reg.interceptor
 	}
+
+	// Build map for O(1) lookups
+	exceptMap := make(map[string]bool, len(reg.exceptEndpoints))
+	for _, ep := range reg.exceptEndpoints {
+		exceptMap[ep] = true
+	}
+
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		for _, endpoint := range reg.exceptEndpoints {
-			if info.FullMethod == endpoint {
-				return handler(srv, ss) // Skip interceptor
-			}
+		if exceptMap[info.FullMethod] {
+			return handler(srv, ss) // Skip interceptor
 		}
 		return reg.interceptor(srv, ss, info, handler)
 	}

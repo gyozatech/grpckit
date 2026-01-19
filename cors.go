@@ -2,6 +2,7 @@ package grpckit
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -79,20 +80,34 @@ func corsMiddleware(cfg CORSConfig) HTTPMiddleware {
 		cfg.MaxAge = 86400
 	}
 
-	// Pre-compute header values
+	// Pre-compute header values (computed once at middleware creation)
 	allowedMethods := strings.Join(cfg.AllowedMethods, ", ")
 	allowedHeaders := strings.Join(cfg.AllowedHeaders, ", ")
 	exposedHeaders := strings.Join(cfg.ExposedHeaders, ", ")
-	maxAge := http.StatusOK // Will be converted to string in handler
+	maxAgeStr := strconv.Itoa(cfg.MaxAge)
+
+	// Build origin map for O(1) lookups
+	originMap := make(map[string]bool, len(cfg.AllowedOrigins))
+	hasWildcard := false
+	for _, o := range cfg.AllowedOrigins {
+		if o == "*" {
+			hasWildcard = true
+		}
+		originMap[o] = true
+	}
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			origin := r.Header.Get("Origin")
 
-			// Determine the allowed origin to return
+			// Determine the allowed origin to return using O(1) map lookup
 			allowedOrigin := ""
 			if origin != "" {
-				allowedOrigin = getAllowedOrigin(origin, cfg.AllowedOrigins)
+				if hasWildcard {
+					allowedOrigin = "*"
+				} else if originMap[origin] {
+					allowedOrigin = origin
+				}
 			}
 
 			// Set CORS headers if origin is allowed
@@ -115,56 +130,12 @@ func corsMiddleware(cfg CORSConfig) HTTPMiddleware {
 
 			// Handle preflight OPTIONS request
 			if r.Method == http.MethodOptions {
-				w.Header().Set("Access-Control-Max-Age", intToString(cfg.MaxAge))
-				w.WriteHeader(maxAge)
+				w.Header().Set("Access-Control-Max-Age", maxAgeStr)
+				w.WriteHeader(http.StatusOK)
 				return
 			}
 
 			next.ServeHTTP(w, r)
 		})
 	}
-}
-
-// getAllowedOrigin checks if the origin is in the allowed list and returns
-// the appropriate value for the Access-Control-Allow-Origin header.
-func getAllowedOrigin(origin string, allowedOrigins []string) string {
-	for _, allowed := range allowedOrigins {
-		if allowed == "*" {
-			return "*"
-		}
-		if allowed == origin {
-			return origin
-		}
-	}
-	return ""
-}
-
-// intToString converts an int to string without importing strconv.
-func intToString(n int) string {
-	if n == 0 {
-		return "0"
-	}
-
-	// Handle the conversion manually
-	negative := n < 0
-	if negative {
-		n = -n
-	}
-
-	// Build digits in reverse
-	digits := make([]byte, 0, 20)
-	for n > 0 {
-		digits = append(digits, byte('0'+n%10))
-		n /= 10
-	}
-
-	// Reverse the digits
-	for i, j := 0, len(digits)-1; i < j; i, j = i+1, j-1 {
-		digits[i], digits[j] = digits[j], digits[i]
-	}
-
-	if negative {
-		return "-" + string(digits)
-	}
-	return string(digits)
 }

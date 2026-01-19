@@ -13,12 +13,37 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
 	"unicode"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
+
+// bufferPool provides reusable byte buffers to reduce GC pressure.
+// Buffers are reset before being returned to the pool.
+var bufferPool = sync.Pool{
+	New: func() interface{} {
+		return new(bytes.Buffer)
+	},
+}
+
+// getBuffer retrieves a buffer from the pool.
+func getBuffer() *bytes.Buffer {
+	return bufferPool.Get().(*bytes.Buffer)
+}
+
+// putBuffer returns a buffer to the pool after resetting it.
+// Very large buffers (>64KB) are not returned to prevent memory leaks.
+func putBuffer(buf *bytes.Buffer) {
+	if buf.Cap() > 64*1024 {
+		// Don't pool very large buffers to prevent memory issues
+		return
+	}
+	buf.Reset()
+	bufferPool.Put(buf)
+}
 
 // titleCase capitalizes the first letter of a string.
 // This is a simple replacement for the deprecated strings.Title.
@@ -205,12 +230,19 @@ func inferType(s string) interface{} {
 }
 
 // marshalJSON is a simple JSON marshaler to avoid import cycles.
+// Uses buffer pooling to reduce GC pressure.
 func marshalJSON(v interface{}) ([]byte, error) {
-	var buf bytes.Buffer
-	if err := writeJSON(&buf, v); err != nil {
+	buf := getBuffer()
+	defer putBuffer(buf)
+
+	if err := writeJSON(buf, v); err != nil {
 		return nil, err
 	}
-	return buf.Bytes(), nil
+
+	// Must copy since buffer will be reused
+	result := make([]byte, buf.Len())
+	copy(result, buf.Bytes())
+	return result, nil
 }
 
 func writeJSON(w io.Writer, v interface{}) error {
@@ -590,6 +622,7 @@ func populateFromMultipart(form *multipart.Form, v interface{}) error {
 }
 
 // marshalJSONWithBytes marshals a map to JSON, encoding []byte as base64.
+// Uses buffer pooling to reduce GC pressure.
 func marshalJSONWithBytes(v map[string]interface{}) ([]byte, error) {
 	// Convert []byte to base64 strings for JSON encoding
 	converted := make(map[string]interface{})
@@ -602,12 +635,18 @@ func marshalJSONWithBytes(v map[string]interface{}) ([]byte, error) {
 		}
 	}
 
-	// Use encoding/json for proper handling
-	var buf bytes.Buffer
-	if err := writeJSONWithBytes(&buf, converted); err != nil {
+	// Use encoding/json for proper handling with pooled buffer
+	buf := getBuffer()
+	defer putBuffer(buf)
+
+	if err := writeJSONWithBytes(buf, converted); err != nil {
 		return nil, err
 	}
-	return buf.Bytes(), nil
+
+	// Must copy since buffer will be reused
+	result := make([]byte, buf.Len())
+	copy(result, buf.Bytes())
+	return result, nil
 }
 
 func writeJSONWithBytes(w io.Writer, v interface{}) error {

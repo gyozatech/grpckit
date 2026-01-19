@@ -1,9 +1,14 @@
 package grpckit
 
 import (
-	"encoding/json"
 	"net/http"
 	"sync/atomic"
+)
+
+// Pre-computed response bytes to avoid JSON encoding on every request.
+var (
+	healthOKResponse       = []byte(`{"status":"ok"}`)
+	healthNotReadyResponse = []byte(`{"status":"not ready"}`)
 )
 
 // HealthStatus represents the health check response.
@@ -35,25 +40,27 @@ func (h *healthHandler) IsReady() bool {
 
 // LivenessHandler returns the liveness probe handler.
 // This endpoint always returns 200 OK if the server is running.
+// Uses pre-computed response bytes for optimal performance.
 func (h *healthHandler) LivenessHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		_ = json.NewEncoder(w).Encode(HealthStatus{Status: "ok"})
+		_, _ = w.Write(healthOKResponse)
 	}
 }
 
 // ReadinessHandler returns the readiness probe handler.
 // This endpoint returns 200 OK if the server is ready to accept traffic.
+// Uses pre-computed response bytes for optimal performance.
 func (h *healthHandler) ReadinessHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		if h.IsReady() {
 			w.WriteHeader(http.StatusOK)
-			_ = json.NewEncoder(w).Encode(HealthStatus{Status: "ok"})
+			_, _ = w.Write(healthOKResponse)
 		} else {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			_ = json.NewEncoder(w).Encode(HealthStatus{Status: "not ready"})
+			_, _ = w.Write(healthNotReadyResponse)
 		}
 	}
 }

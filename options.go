@@ -3,6 +3,8 @@ package grpckit
 import (
 	"context"
 	"net/http"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -86,12 +88,32 @@ type JSONOptions struct {
 
 // globalSwaggerData is set by generated init() code from swagger_gen.go.
 // This allows the swagger data to be embedded without user-visible //go:embed.
-var globalSwaggerData []byte
+// Protected by swaggerMu for concurrent access safety.
+var (
+	globalSwaggerData []byte
+	swaggerMu         sync.RWMutex
+)
 
 // SetSwaggerData is called by the generated swagger_gen.go init() function.
-// Users should not call this directly.
+// Users should not call this directly. Thread-safe.
 func SetSwaggerData(data []byte) {
+	swaggerMu.Lock()
 	globalSwaggerData = data
+	swaggerMu.Unlock()
+}
+
+// getSwaggerData returns the global swagger data in a thread-safe manner.
+func getSwaggerData() []byte {
+	swaggerMu.RLock()
+	defer swaggerMu.RUnlock()
+	return globalSwaggerData
+}
+
+// compiledPattern holds a pre-compiled glob pattern for efficient matching.
+type compiledPattern struct {
+	prefix   string // For "/**" suffix patterns
+	pattern  string // Original pattern for path.Match
+	isDouble bool   // true for "/**", false for single "*"
 }
 
 // serverConfig holds all configuration for the server.
@@ -108,6 +130,12 @@ type serverConfig struct {
 	authFunc           AuthFunc
 	protectedEndpoints []string
 	publicEndpoints    []string
+
+	// Pre-compiled patterns for O(1) exact match lookups
+	protectedExactMap    map[string]bool      // Exact patterns (no wildcards)
+	protectedWildcards   []compiledPattern    // Wildcard patterns
+	publicExactMap       map[string]bool      // Exact patterns (no wildcards)
+	publicWildcards      []compiledPattern    // Wildcard patterns
 
 	// Features
 	healthEnabled  bool
@@ -148,19 +176,49 @@ type grpcServiceRegistration struct {
 // newServerConfig creates a new server config with default values.
 func newServerConfig() *serverConfig {
 	return &serverConfig{
-		grpcPort:           9090,
-		httpPort:           8080,
-		grpcServices:       make([]grpcServiceRegistration, 0),
-		restServices:       make([]RESTRegistrar, 0),
-		marshalers:         make(map[string]runtime.Marshaler),
-		gatewayOptions:     make([]runtime.ServeMuxOption, 0),
-		httpHandlers:       make([]httpHandlerRegistration, 0),
-		httpMiddlewares:    make([]HTTPMiddleware, 0),
-		unaryInterceptors:  make([]unaryInterceptorRegistration, 0),
-		streamInterceptors: make([]streamInterceptorRegistration, 0),
-		gracefulTimeout:    30 * time.Second,
-		logLevel:           "info",
+		grpcPort:             9090,
+		httpPort:             8080,
+		grpcServices:         make([]grpcServiceRegistration, 0),
+		restServices:         make([]RESTRegistrar, 0),
+		marshalers:           make(map[string]runtime.Marshaler),
+		gatewayOptions:       make([]runtime.ServeMuxOption, 0),
+		httpHandlers:         make([]httpHandlerRegistration, 0),
+		httpMiddlewares:      make([]HTTPMiddleware, 0),
+		unaryInterceptors:    make([]unaryInterceptorRegistration, 0),
+		streamInterceptors:   make([]streamInterceptorRegistration, 0),
+		protectedExactMap:    make(map[string]bool),
+		protectedWildcards:   make([]compiledPattern, 0),
+		publicExactMap:       make(map[string]bool),
+		publicWildcards:      make([]compiledPattern, 0),
+		gracefulTimeout:      30 * time.Second,
+		logLevel:             "info",
 	}
+}
+
+// compilePatterns separates patterns into exact matches and wildcards.
+// Returns a map for O(1) exact lookups and a slice of compiled wildcards.
+func compilePatterns(patterns []string) (map[string]bool, []compiledPattern) {
+	exact := make(map[string]bool, len(patterns))
+	wildcards := make([]compiledPattern, 0)
+
+	for _, p := range patterns {
+		if strings.Contains(p, "*") {
+			if strings.HasSuffix(p, "/**") {
+				wildcards = append(wildcards, compiledPattern{
+					prefix:   strings.TrimSuffix(p, "/**"),
+					isDouble: true,
+				})
+			} else {
+				wildcards = append(wildcards, compiledPattern{
+					pattern: p,
+				})
+			}
+		} else {
+			exact[p] = true
+		}
+	}
+
+	return exact, wildcards
 }
 
 // WithGRPCPort sets the gRPC server port.
@@ -234,6 +292,8 @@ func WithAuth(authFunc AuthFunc) Option {
 func WithProtectedEndpoints(patterns ...string) Option {
 	return func(c *serverConfig) {
 		c.protectedEndpoints = append(c.protectedEndpoints, patterns...)
+		// Recompile all patterns (allows multiple calls to WithProtectedEndpoints)
+		c.protectedExactMap, c.protectedWildcards = compilePatterns(c.protectedEndpoints)
 	}
 }
 
@@ -247,6 +307,8 @@ func WithProtectedEndpoints(patterns ...string) Option {
 func WithPublicEndpoints(patterns ...string) Option {
 	return func(c *serverConfig) {
 		c.publicEndpoints = append(c.publicEndpoints, patterns...)
+		// Recompile all patterns (allows multiple calls to WithPublicEndpoints)
+		c.publicExactMap, c.publicWildcards = compilePatterns(c.publicEndpoints)
 	}
 }
 
