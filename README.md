@@ -825,6 +825,40 @@ func TestItemService_CRUD(t *testing.T) {
 }
 ```
 
+## Performance
+
+gRPCkit is designed for minimal overhead. Benchmarks show it performs on par with vanilla grpc-gateway.
+
+### Framework Comparison
+
+| Framework | gRPC Latency | REST Latency | Notes |
+|-----------|--------------|--------------|-------|
+| **gRPCkit** | 30.5 µs | 69.7 µs | Zero abstraction overhead |
+| Vanilla grpc-gateway | 30.6 µs | 76.1 µs | Baseline |
+| Gin + grpc-gateway | 26.0 µs | 76.1 µs | |
+| Twirp | 63.8 µs | 57.6 µs | |
+| Connect-go | 107.9 µs | - | |
+
+### Optimization Highlights
+
+| Optimization | Benefit |
+|--------------|---------|
+| Token extraction | Allocation-free for 95%+ of requests (~2 ns/op) |
+| Auth pattern matching | O(1) map lookup (~7-9 ns/op) |
+| Buffer pooling | 50-90% reduction in GC pressure |
+| Middleware overhead | <5% for auth, <3% for metrics |
+
+### Running Benchmarks
+
+```bash
+cd benchmark
+make bench           # Run all benchmarks
+make bench-compare   # Framework comparison only
+make bench-report    # Generate report with benchstat
+```
+
+See [benchmark/README.md](./benchmark/README.md) for detailed benchmark documentation.
+
 ## Example
 
 See the [example](./example) directory for a complete working example with:
