@@ -1,0 +1,25 @@
+version: v2
+plugins:
+  # Generate Go protobuf code
+  - remote: buf.build/protocolbuffers/go
+    out: gen
+    opt:
+      - paths=source_relative
+
+  # Generate Go gRPC code
+  - remote: buf.build/grpc/go
+    out: gen
+    opt:
+      - paths=source_relative
+
+  # Generate grpc-gateway REST code
+  - remote: buf.build/grpc-ecosystem/gateway
+    out: gen
+    opt:
+      - paths=source_relative
+
+  # Generate Connect-go code for comparison benchmarks
+  - remote: buf.build/connectrpc/go
+    out: gen
+    opt:
+      - paths=source_relative

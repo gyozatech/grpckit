@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package benchmark.v1;
+
+option go_package = "github.com/gyozatech/grpckit/benchmark/proto/gen;benchpb";
+
+import "google/api/annotations.proto";
+
+// BenchmarkService provides endpoints for performance testing.
+service BenchmarkService {
+  // Ping is a simple health check endpoint with minimal overhead.
+  rpc Ping(PingRequest) returns (PingResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/ping"
+    };
+  }
+
+  // Echo returns the input message, testing serialization overhead.
+  rpc Echo(EchoRequest) returns (EchoResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/echo"
+      body: "*"
+    };
+  }
+
+  // GetItem retrieves an item by ID, testing path parameter extraction.
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/items/{id}"
+    };
+  }
+
+  // CreateItem creates a new item, testing request body parsing.
+  rpc CreateItem(CreateItemRequest) returns (CreateItemResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/items"
+      body: "*"
+    };
+  }
+
+  // ListItems returns multiple items, testing response serialization.
+  rpc ListItems(ListItemsRequest) returns (ListItemsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/items"
+    };
+  }
+}
+
+message PingRequest {}
+
+message PingResponse {
+  string message = 1;
+  int64 timestamp = 2;
+}
+
+message EchoRequest {
+  string message = 1;
+  bytes data = 2;
+  map<string, string> metadata = 3;
+}
+
+message EchoResponse {
+  string message = 1;
+  bytes data = 2;
+  map<string, string> metadata = 3;
+}
+
+message GetItemRequest {
+  string id = 1;
+}
+
+message GetItemResponse {
+  Item item = 1;
+}
+
+message CreateItemRequest {
+  string name = 1;
+  string description = 2;
+  double price = 3;
+  repeated string tags = 4;
+}
+
+message CreateItemResponse {
+  Item item = 1;
+}
+
+message ListItemsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListItemsResponse {
+  repeated Item items = 1;
+  string next_page_token = 2;
+}
+
+message Item {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  repeated string tags = 5;
+  int64 created_at = 6;
+}

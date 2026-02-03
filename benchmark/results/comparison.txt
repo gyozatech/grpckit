@@ -1,0 +1,961 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/gyozatech/grpckit/benchmark/comparison
+cpu: Apple M2
+BenchmarkGRPCUnary_Ping/gRPCkit-8         	   19879	     30538 ns/op	    9861 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/gRPCkit-8         	   20859	     31589 ns/op	    9855 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/gRPCkit-8         	   20348	     29859 ns/op	    9857 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Vanilla-8         	   17971	     30987 ns/op	    9871 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Vanilla-8         	   20114	     30556 ns/op	    9857 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Vanilla-8         	   20995	     30490 ns/op	    9852 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Connect-8         	    5298	    107915 ns/op	   14870 B/op	     123 allocs/op
+BenchmarkGRPCUnary_Ping/Connect-8         	    5545	    106369 ns/op	   15117 B/op	     123 allocs/op
+BenchmarkGRPCUnary_Ping/Connect-8         	    5443	    120893 ns/op	   14955 B/op	     123 allocs/op
+BenchmarkGRPCUnary_Ping/Twirp-8           	    9566	     63807 ns/op	    9606 B/op	     105 allocs/op
+BenchmarkGRPCUnary_Ping/Twirp-8           	   10000	     61231 ns/op	    9600 B/op	     105 allocs/op
+BenchmarkGRPCUnary_Ping/Twirp-8           	    8167	     66090 ns/op	    9620 B/op	     105 allocs/op
+BenchmarkGRPCUnary_Ping/Gin-8             	   22664	     25694 ns/op	    9844 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Gin-8             	   23559	     26297 ns/op	    9840 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Ping/Gin-8             	   22574	     25950 ns/op	    9844 B/op	     188 allocs/op
+BenchmarkGRPCUnary_Echo/gRPCkit-8         	   19696	     31052 ns/op	   11641 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/gRPCkit-8         	   18786	     30935 ns/op	   11647 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/gRPCkit-8         	   18206	     39091 ns/op	   11650 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/Vanilla-8         	   19352	     30594 ns/op	   11644 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/Vanilla-8         	   18664	     32715 ns/op	   11647 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/Vanilla-8         	   18409	     30914 ns/op	   11649 B/op	     246 allocs/op
+BenchmarkGRPCUnary_Echo/Connect-8         	    4965	    120655 ns/op	   16491 B/op	     181 allocs/op
+BenchmarkGRPCUnary_Echo/Connect-8         	    4408	    119887 ns/op	   16436 B/op	     181 allocs/op
+BenchmarkGRPCUnary_Echo/Connect-8         	    5179	    120658 ns/op	   17122 B/op	     181 allocs/op
+BenchmarkGRPCUnary_Echo/Twirp-8           	    9302	     68953 ns/op	   11076 B/op	     141 allocs/op
+BenchmarkGRPCUnary_Echo/Twirp-8           	    7641	     70534 ns/op	   11062 B/op	     141 allocs/op
+BenchmarkGRPCUnary_Echo/Twirp-8           	   10000	     68640 ns/op	   11083 B/op	     141 allocs/op
+BenchmarkGRPCUnary_Parallel/gRPCkit-8     	   57787	     10504 ns/op	    9468 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/gRPCkit-8     	   56209	     10967 ns/op	    9469 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/gRPCkit-8     	   57644	      9989 ns/op	    9468 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/Vanilla-8     	   55332	     11071 ns/op	    9470 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/Vanilla-8     	   54662	     10079 ns/op	    9470 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/Vanilla-8     	   54244	      9751 ns/op	    9471 B/op	     171 allocs/op
+BenchmarkGRPCUnary_Parallel/Connect-8     	   17170	     36705 ns/op	   17745 B/op	     137 allocs/op
+BenchmarkGRPCUnary_Parallel/Connect-8     	   15307	     37277 ns/op	   17959 B/op	     137 allocs/op
+BenchmarkGRPCUnary_Parallel/Connect-8     	   15966	     35863 ns/op	   17958 B/op	     137 allocs/op
+BenchmarkREST_Ping/gRPCkit-8              	    7783	     73547 ns/op	   11297 B/op	     164 allocs/op
+BenchmarkREST_Ping/gRPCkit-8              	    7896	     69658 ns/op	   11300 B/op	     164 allocs/op
+BenchmarkREST_Ping/gRPCkit-8              	    7680	     67448 ns/op	   11313 B/op	     164 allocs/op
+BenchmarkREST_Ping/Vanilla-8              	    7965	     68051 ns/op	   11270 B/op	     161 allocs/op
+BenchmarkREST_Ping/Vanilla-8              	    7768	     84530 ns/op	   11284 B/op	     161 allocs/op
+BenchmarkREST_Ping/Vanilla-8              	    7447	     76138 ns/op	   11430 B/op	     161 allocs/op
+BenchmarkREST_Ping/Gin-8                  	    7099	     76804 ns/op	   11525 B/op	     161 allocs/op
+BenchmarkREST_Ping/Gin-8                  	    7178	     75071 ns/op	   11493 B/op	     161 allocs/op
+BenchmarkREST_Ping/Gin-8                  	    7324	     76068 ns/op	   11504 B/op	     161 allocs/op
+BenchmarkREST_Ping/Twirp_POST-8           	   10000	     61705 ns/op	    8444 B/op	      86 allocs/op
+BenchmarkREST_Ping/Twirp_POST-8           	   10000	     57567 ns/op	    8361 B/op	      86 allocs/op
+BenchmarkREST_Ping/Twirp_POST-8           	   10000	     57582 ns/op	    8496 B/op	      86 allocs/op
+BenchmarkREST_Echo/gRPCkit-8              	    6846	     79427 ns/op	   15680 B/op	     209 allocs/op
+BenchmarkREST_Echo/gRPCkit-8              	    7020	     81215 ns/op	   15555 B/op	     209 allocs/op
+BenchmarkREST_Echo/gRPCkit-8              	    7540	     85066 ns/op	   15601 B/op	     209 allocs/op
+BenchmarkREST_Echo/Vanilla-8              	    5632	     89495 ns/op	   15437 B/op	     206 allocs/op
+BenchmarkREST_Echo/Vanilla-8              	    7023	     79551 ns/op	   15375 B/op	     206 allocs/op
+BenchmarkREST_Echo/Vanilla-8              	    7264	     79048 ns/op	   15403 B/op	     206 allocs/op
+BenchmarkREST_Echo/Gin-8                  	    6416	     86896 ns/op	   15364 B/op	     206 allocs/op
+BenchmarkREST_Echo/Gin-8                  	    7288	     80484 ns/op	   15367 B/op	     206 allocs/op
+BenchmarkREST_Echo/Gin-8                  	    6867	     90669 ns/op	   15244 B/op	     206 allocs/op
+BenchmarkREST_Echo/Twirp-8                	   10287	     58314 ns/op	    8962 B/op	     100 allocs/op
+BenchmarkREST_Echo/Twirp-8                	    8923	     70766 ns/op	    9021 B/op	     100 allocs/op
+BenchmarkREST_Echo/Twirp-8                	   10000	     57626 ns/op	    8955 B/op	     100 allocs/op
+BenchmarkREST_GetItem/gRPCkit-8           	    7615	     73192 ns/op	   11751 B/op	     162 allocs/op
+BenchmarkREST_GetItem/gRPCkit-8           	    7628	     69022 ns/op	   11735 B/op	     162 allocs/op
+BenchmarkREST_GetItem/gRPCkit-8           	    7724	     71461 ns/op	   11747 B/op	     162 allocs/op
+BenchmarkREST_GetItem/Vanilla-8           	    7423	     72342 ns/op	   11684 B/op	     159 allocs/op
+BenchmarkREST_GetItem/Vanilla-8           	    8372	     71922 ns/op	   11673 B/op	     159 allocs/op
+BenchmarkREST_GetItem/Vanilla-8           	    7935	     71318 ns/op	   11670 B/op	     159 allocs/op
+BenchmarkREST_GetItem/Gin-8               	    7771	     82428 ns/op	   11695 B/op	     159 allocs/op
+BenchmarkREST_GetItem/Gin-8               	    6492	     84417 ns/op	   11684 B/op	     159 allocs/op
+BenchmarkREST_GetItem/Gin-8               	    4982	    100709 ns/op	   11669 B/op	     159 allocs/op
+BenchmarkREST_Parallel/gRPCkit-8          	   15460	     38613 ns/op	   12992 B/op	     171 allocs/op
+BenchmarkREST_Parallel/gRPCkit-8          	   16818	     31337 ns/op	   13365 B/op	     172 allocs/op
+BenchmarkREST_Parallel/gRPCkit-8          	   17014	     32928 ns/op	   13483 B/op	     173 allocs/op
+BenchmarkREST_Parallel/Vanilla-8          	--- FAIL: BenchmarkREST_Parallel/Vanilla-8
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:64332/api/v1/ping": dial tcp 127.0.0.1:64332: connect: can't assign requested address
+BenchmarkREST_Parallel/Vanilla-8          	--- FAIL: BenchmarkREST_Parallel/Vanilla-8
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+BenchmarkREST_Parallel/Vanilla-8          	--- FAIL: BenchmarkREST_Parallel/Vanilla
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50018/api/v1/ping": dial tcp 127.0.0.1:50018: connect: can't assign requested address
+--- FAIL: BenchmarkREST_Parallel/Vanilla-8
+    rest_test.go:329: request failed: Get "http://127.0.0.1:50018/api/v1/ping": dial tcp 127.0.0.1:50018: connect: can't assign requested address
+BenchmarkREST_Parallel/Gin-8              	--- FAIL: BenchmarkREST_Parallel/Gin-8
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+    rest_test.go:355: request failed: Get "http://127.0.0.1:49928/api/v1/ping": dial tcp 127.0.0.1:49928: connect: can't assign requested address
+BenchmarkREST_Parallel/Gin-8              	--- FAIL: BenchmarkREST_Parallel/Gin
+    rest_test.go:355: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+--- FAIL: BenchmarkREST_Parallel/Gin-8
+    rest_test.go:355: request failed: Get "http://127.0.0.1:50002/api/v1/ping": dial tcp 127.0.0.1:50002: connect: can't assign requested address
+BenchmarkREST_Parallel/Gin-8              	--- FAIL: BenchmarkREST_Parallel/Gin
+    rest_test.go:355: request failed: Get "http://127.0.0.1:50018/api/v1/ping": dial tcp 127.0.0.1:50018: connect: can't assign requested address
+--- FAIL: BenchmarkREST_Parallel/Gin-8
+    rest_test.go:355: request failed: Get "http://127.0.0.1:50018/api/v1/ping": dial tcp 127.0.0.1:50018: connect: can't assign requested address
+--- FAIL: BenchmarkREST_Parallel
+BenchmarkThroughput_GRPC/GRPCkit-8        	   52432	     13240 ns/op	    9478 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/GRPCkit-8        	   55088	     10999 ns/op	    9475 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/GRPCkit-8        	   58885	      9974 ns/op	    9471 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/Vanilla-8        	   59283	     10727 ns/op	    9469 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/Vanilla-8        	   55858	      9954 ns/op	    9471 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/Vanilla-8        	   61639	      9485 ns/op	    9468 B/op	     171 allocs/op
+BenchmarkThroughput_GRPC/Connect-8        	    1122	   1852870 ns/op	   15392 B/op	     123 allocs/op
+BenchmarkThroughput_GRPC/Connect-8        	     316	   1895000 ns/op	   30203 B/op	     117 allocs/op
+BenchmarkThroughput_GRPC/Connect-8        	     298	   1735703 ns/op	   36671 B/op	     138 allocs/op
+BenchmarkThroughput_REST/GRPCkit-8        	     318	   1845479 ns/op	    6738 B/op	      86 allocs/op
+BenchmarkThroughput_REST/GRPCkit-8        	     318	   1857271 ns/op	    3879 B/op	      53 allocs/op
+BenchmarkThroughput_REST/GRPCkit-8        	     316	   1845470 ns/op	    3947 B/op	      54 allocs/op
+BenchmarkThroughput_REST/Vanilla-8        	     295	   1948168 ns/op	    4801 B/op	      65 allocs/op
+BenchmarkThroughput_REST/Vanilla-8        	     313	   2014970 ns/op	    3990 B/op	      54 allocs/op
+BenchmarkThroughput_REST/Vanilla-8        	     380	   2009353 ns/op	    4587 B/op	      62 allocs/op
+BenchmarkThroughput_REST/Gin-8            	     312	   1851858 ns/op	    5703 B/op	      70 allocs/op
+BenchmarkThroughput_REST/Gin-8            	     283	   1932559 ns/op	    3902 B/op	      53 allocs/op
+BenchmarkThroughput_REST/Gin-8            	     297	   1945418 ns/op	    3774 B/op	      52 allocs/op
+BenchmarkThroughput_Mixed/GRPCkit-8       	panic: duplicate metrics collector registration attempted
+
+goroutine 2101884 [running]:
+github.com/prometheus/client_golang/prometheus.(*Registry).MustRegister(0x1041f2740, {0x14000121a60?, 0x0?, 0x0?})
+	/Users/alessandroargentieri/go/pkg/mod/github.com/prometheus/client_golang@v1.20.0/prometheus/registry.go:406 +0x6c
+github.com/prometheus/client_golang/prometheus.MustRegister(...)
+	/Users/alessandroargentieri/go/pkg/mod/github.com/prometheus/client_golang@v1.20.0/prometheus/registry.go:177
+github.com/gyozatech/grpckit.newMetrics({0x103478107?, 0x140001c6400?})
+	/Users/alessandroargentieri/tests/polpette/metrics.go:54 +0x378
+github.com/gyozatech/grpckit.New({0x140030d2060, 0x4, 0x14000761c01?})
+	/Users/alessandroargentieri/tests/polpette/grpckit.go:125 +0x848
+github.com/gyozatech/grpckit.NewTestServer({0x140030d2060?, 0x1029820e8?, 0x104705000?})
+	/Users/alessandroargentieri/tests/polpette/testing.go:64 +0x20
+github.com/gyozatech/grpckit/benchmark/internal/harness.NewGRPCkitHarness({0x0, 0x1, 0x0, 0x1, {0x10391de10, 0x14000102930}})
+	/Users/alessandroargentieri/tests/polpette/benchmark/internal/harness/grpckit.go:67 +0x3c8
+github.com/gyozatech/grpckit/benchmark/comparison.BenchmarkThroughput_Mixed.func1(0x14000e68008)
+	/Users/alessandroargentieri/tests/polpette/benchmark/comparison/throughput_test.go:165 +0x64
+testing.(*B).runN(0x14000e68008, 0x64)
+	/Users/alessandroargentieri/sdk/go1.25.6/src/testing/benchmark.go:219 +0x184
+testing.(*B).launch(0x14000e68008)
+	/Users/alessandroargentieri/sdk/go1.25.6/src/testing/benchmark.go:354 +0x174
+created by testing.(*B).doBench in goroutine 2101772
+	/Users/alessandroargentieri/sdk/go1.25.6/src/testing/benchmark.go:296 +0x68
+exit status 2
+FAIL	github.com/gyozatech/grpckit/benchmark/comparison	91.489s
+FAIL
