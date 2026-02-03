@@ -448,3 +448,202 @@ func TestGRPCAuthInterceptor_AuthFailure(t *testing.T) {
 		t.Errorf("expected Unauthenticated error, got %v", err)
 	}
 }
+
+// mockServerStream is a minimal mock for grpc.ServerStream used in tests.
+type mockServerStream struct {
+	grpc.ServerStream
+	ctx context.Context
+}
+
+func (m *mockServerStream) Context() context.Context {
+	return m.ctx
+}
+
+func TestGRPCStreamAuthInterceptor_NoAuthFunc(t *testing.T) {
+	cfg := &serverConfig{authFunc: nil}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	handlerCalled := false
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		handlerCalled = true
+		return nil
+	}
+
+	md := metadata.New(map[string]string{})
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+	stream := &mockServerStream{ctx: ctx}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test/Method"}, handler)
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if !handlerCalled {
+		t.Error("handler should be called when no auth func")
+	}
+}
+
+func TestGRPCStreamAuthInterceptor_PublicEndpoint(t *testing.T) {
+	cfg := &serverConfig{
+		authFunc:        func(ctx context.Context, token string) (context.Context, error) { return nil, errors.New("should not be called") },
+		publicEndpoints: []string{"/test.Service/*"},
+	}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	handlerCalled := false
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		handlerCalled = true
+		return nil
+	}
+
+	md := metadata.New(map[string]string{})
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+	stream := &mockServerStream{ctx: ctx}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test.Service/WatchSomething"}, handler)
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if !handlerCalled {
+		t.Error("handler should be called for public endpoint")
+	}
+}
+
+func TestGRPCStreamAuthInterceptor_MissingMetadata(t *testing.T) {
+	cfg := &serverConfig{
+		authFunc: func(ctx context.Context, token string) (context.Context, error) {
+			return ctx, nil
+		},
+	}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		return nil
+	}
+
+	// Context without metadata
+	stream := &mockServerStream{ctx: context.Background()}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test/Method"}, handler)
+
+	if err == nil {
+		t.Error("expected error for missing metadata")
+	}
+
+	st, ok := status.FromError(err)
+	if !ok || st.Code() != codes.Unauthenticated {
+		t.Errorf("expected Unauthenticated error, got %v", err)
+	}
+}
+
+func TestGRPCStreamAuthInterceptor_AuthSuccess(t *testing.T) {
+	cfg := &serverConfig{
+		authFunc: func(ctx context.Context, token string) (context.Context, error) {
+			if token != "valid-token" {
+				return nil, ErrUnauthorized
+			}
+			return context.WithValue(ctx, UserIDKey, "user123"), nil
+		},
+	}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	var capturedCtx context.Context
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		capturedCtx = stream.Context()
+		return nil
+	}
+
+	md := metadata.New(map[string]string{"authorization": "Bearer valid-token"})
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+	stream := &mockServerStream{ctx: ctx}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test/Method"}, handler)
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if capturedCtx.Value(UserIDKey) != "user123" {
+		t.Error("expected enriched context with user_id to be propagated to stream handler")
+	}
+}
+
+func TestGRPCStreamAuthInterceptor_PropagatesContext(t *testing.T) {
+	// This test specifically verifies that the enriched context from authFunc
+	// is available in the stream handler, which is critical for grant type validation.
+	type claimsKey struct{}
+
+	cfg := &serverConfig{
+		authFunc: func(ctx context.Context, token string) (context.Context, error) {
+			// Simulate OIDC auth that adds claims to context
+			claims := map[string]string{
+				"grant_type": "client_credentials",
+				"client_id":  "test-client",
+			}
+			return context.WithValue(ctx, claimsKey{}, claims), nil
+		},
+	}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	var capturedClaims map[string]string
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		// This simulates what GrantTypeStreamInterceptor does - extract claims from context
+		claims, ok := stream.Context().Value(claimsKey{}).(map[string]string)
+		if ok {
+			capturedClaims = claims
+		}
+		return nil
+	}
+
+	md := metadata.New(map[string]string{"authorization": "Bearer some-token"})
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+	stream := &mockServerStream{ctx: ctx}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test/WatchMethod"}, handler)
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if capturedClaims == nil {
+		t.Fatal("claims should be available in stream context - this is the bug that was fixed!")
+	}
+
+	if capturedClaims["grant_type"] != "client_credentials" {
+		t.Errorf("expected grant_type=client_credentials, got %v", capturedClaims["grant_type"])
+	}
+
+	if capturedClaims["client_id"] != "test-client" {
+		t.Errorf("expected client_id=test-client, got %v", capturedClaims["client_id"])
+	}
+}
+
+func TestGRPCStreamAuthInterceptor_AuthFailure(t *testing.T) {
+	cfg := &serverConfig{
+		authFunc: func(ctx context.Context, token string) (context.Context, error) {
+			return nil, ErrUnauthorized
+		},
+	}
+	interceptor := grpcStreamAuthInterceptor(cfg)
+
+	handler := func(srv interface{}, stream grpc.ServerStream) error {
+		t.Error("handler should not be called")
+		return nil
+	}
+
+	md := metadata.New(map[string]string{"authorization": "Bearer invalid-token"})
+	ctx := metadata.NewIncomingContext(context.Background(), md)
+	stream := &mockServerStream{ctx: ctx}
+
+	err := interceptor(nil, stream, &grpc.StreamServerInfo{FullMethod: "/test/Method"}, handler)
+
+	if err == nil {
+		t.Error("expected authentication error")
+	}
+
+	st, ok := status.FromError(err)
+	if !ok || st.Code() != codes.Unauthenticated {
+		t.Errorf("expected Unauthenticated error, got %v", err)
+	}
+}

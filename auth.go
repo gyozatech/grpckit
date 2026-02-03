@@ -79,6 +79,19 @@ func grpcAuthInterceptor(cfg *serverConfig) grpc.UnaryServerInterceptor {
 	}
 }
 
+// wrappedServerStream wraps a grpc.ServerStream to override Context().
+// This allows streaming interceptors to propagate an enriched context
+// (e.g., with auth claims) to the stream handler.
+type wrappedServerStream struct {
+	grpc.ServerStream
+	ctx context.Context
+}
+
+// Context returns the wrapped context instead of the original stream's context.
+func (w *wrappedServerStream) Context() context.Context {
+	return w.ctx
+}
+
 // grpcStreamAuthInterceptor creates a gRPC stream interceptor for authentication.
 func grpcStreamAuthInterceptor(cfg *serverConfig) grpc.StreamServerInterceptor {
 	return func(
@@ -110,13 +123,19 @@ func grpcStreamAuthInterceptor(cfg *serverConfig) grpc.StreamServerInterceptor {
 			token = extractToken(tokens[0])
 		}
 
-		// Call auth function
-		_, err := cfg.authFunc(ctx, token)
+		// Call auth function and USE the enriched context
+		newCtx, err := cfg.authFunc(ctx, token)
 		if err != nil {
 			return status.Error(codes.Unauthenticated, err.Error())
 		}
 
-		return handler(srv, ss)
+		// Wrap the stream with the enriched context so that
+		// downstream interceptors and handlers can access auth claims
+		wrapped := &wrappedServerStream{
+			ServerStream: ss,
+			ctx:          newCtx,
+		}
+		return handler(srv, wrapped)
 	}
 }
 
